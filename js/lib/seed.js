@@ -38,6 +38,20 @@ const defaultContact = {
 };
 
 const defaultPages = {
+  identity: {
+    companyName: "Staff Technique Madagascar",
+    slogan: "Finition • Décoration • Bâtiment",
+    logo: "./assets/images/logo.svg",
+    coverImage: "./assets/images/hero.svg",
+    coverTitle: "Donnez une finition professionnelle à vos espaces.",
+    coverText:
+      "Plafonds, peinture, cloisons, sols, électricité et mobilier — une équipe organisée, des matériaux de qualité, un rendu propre.",
+    coverProject: {
+      image: "./assets/images/hero.svg",
+      title: "Projet vitrine (démo)",
+      description: "Un exemple de projet mis en avant sous la cover.",
+    },
+  },
   about:
     "Staff Technique Madagascar est une entreprise de finition et décoration. Cette section est fictive (démo) et peut être modifiée via l’espace admin.",
   faqIntro:

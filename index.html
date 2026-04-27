@@ -43,16 +43,16 @@
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div class="flex items-center gap-3">
           <img
-            src="./assets/images/logo.svg"
-            alt="Logo Staff Technique Madagascar"
+            :src="pages?.identity?.logo || './assets/images/logo.svg'"
+            :alt="`Logo ${pages?.identity?.companyName || 'entreprise'}`"
             class="h-9 w-9"
             width="36"
             height="36"
             loading="eager"
           />
           <div class="leading-tight">
-            <div class="font-semibold">Staff Technique Madagascar</div>
-            <div class="text-xs text-slate-500">Finition • Décoration • Bâtiment</div>
+            <div class="font-semibold">{{ pages?.identity?.companyName || 'Staff Technique Madagascar' }}</div>
+            <div class="text-xs text-slate-500">{{ pages?.identity?.slogan || 'Finition • Décoration • Bâtiment' }}</div>
           </div>
         </div>
 
@@ -80,11 +80,13 @@
           <div>
             <p class="badge">Entreprise de finition & décoration (Madagascar)</p>
             <h1 class="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-              Donnez une finition professionnelle à vos espaces.
+              {{ pages?.identity?.coverTitle || 'Donnez une finition professionnelle à vos espaces.' }}
             </h1>
             <p class="mt-4 text-slate-600">
-              Plafonds, peinture, cloisons, sols, électricité et mobilier — une équipe organisée,
-              des matériaux de qualité, un rendu propre.
+              {{
+                pages?.identity?.coverText ||
+                'Plafonds, peinture, cloisons, sols, électricité et mobilier — une équipe organisée, des matériaux de qualité, un rendu propre.'
+              }}
             </p>
 
           <div class="mt-5 flex flex-wrap gap-2">
@@ -124,8 +126,8 @@
 
           <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <img
-              src="./assets/images/hero.svg"
-              alt="Illustration chantier (fictif)"
+              :src="pages?.identity?.coverImage || './assets/images/hero.svg'"
+              alt="Cover"
               class="h-72 w-full object-cover md:h-96"
               width="1200"
               height="800"
@@ -138,6 +140,52 @@
                 <div class="mt-1 text-xs text-slate-600">
                   Des équipes séparées par spécialité pour un chantier plus fluide.
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        v-if="pages?.identity?.coverProject?.title || pages?.identity?.coverProject?.description"
+        class="-mt-6 pb-10"
+      >
+        <div class="grid gap-4 md:grid-cols-12">
+          <div class="md:col-span-8">
+            <div class="card cardHover overflow-hidden">
+              <div class="grid gap-4 md:grid-cols-12 md:items-center">
+                <div class="md:col-span-4">
+                  <img
+                    :src="pages?.identity?.coverProject?.image || pages?.identity?.coverImage || './assets/images/hero.svg'"
+                    alt="Projet mis en avant"
+                    class="h-32 w-full rounded-xl border border-slate-200 object-cover md:h-28"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="md:col-span-8">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="text-xs text-slate-500">Projet mis en avant</div>
+                      <div class="mt-1 text-base font-semibold truncate">
+                        {{ pages?.identity?.coverProject?.title }}
+                      </div>
+                      <div class="mt-1 text-sm text-slate-600 line-clamp-2">
+                        {{ pages?.identity?.coverProject?.description }}
+                      </div>
+                    </div>
+                    <a class="btn btn-xs btn-outline shrink-0" href="#realisations">Voir</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="card">
+              <div class="text-sm font-semibold">Besoin d’un devis rapide ?</div>
+              <div class="mt-1 text-sm text-slate-600">Décrivez votre chantier, réponse sous 24h (démo).</div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <a class="btn btn-primary btn-sm" href="#devis">Demander un devis</a>
+                <a class="btn btn-outline btn-sm" :href="waLink">WhatsApp</a>
               </div>
             </div>
           </div>
@@ -341,8 +389,18 @@
               />
               <div class="min-w-0">
                 <div class="font-semibold truncate">{{ t.name }}</div>
-                <div class="text-xs text-slate-500 truncate">
-                  {{ t.company || 'Client' }} • {{ t.rating }}/5
+                <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                  <span class="truncate">{{ t.company || 'Client' }}</span>
+                  <span class="stars" :aria-label="`Note ${t.rating || 0} sur 5`">
+                    <span
+                      v-for="i in 5"
+                      :key="i"
+                      class="star"
+                      :class="{ 'star--on': i <= (t.rating || 0) }"
+                      aria-hidden="true"
+                      >★</span
+                    >
+                  </span>
                 </div>
               </div>
             </div>
@@ -364,35 +422,134 @@
             <div class="grid gap-3">
               <div class="grid gap-1">
                 <label class="label" for="qName">Nom</label>
-                <input id="qName" v-model.trim="quoteForm.name" class="input" required />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M20 21a8 8 0 0 0-16 0"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </span>
+                  <input id="qName" v-model.trim="quoteForm.name" class="input input--withIcon" required />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label" for="qPhone">Téléphone</label>
-                <input id="qPhone" v-model.trim="quoteForm.phone" class="input" required />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6.5 3.5h2.2c.6 0 1.1.4 1.2 1l.6 3c.1.6-.2 1.1-.7 1.3l-1.7.7a12.7 12.7 0 0 0 6.6 6.6l.7-1.7c.2-.5.7-.8 1.3-.7l3 .6c.6.1 1 .6 1 1.2v2.2c0 .7-.5 1.3-1.2 1.4-8.7 1.1-15.6-5.8-14.5-14.5.1-.7.7-1.2 1.4-1.2Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <input id="qPhone" v-model.trim="quoteForm.phone" class="input input--withIcon" required />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label" for="qEmail">Email (optionnel)</label>
-                <input id="qEmail" v-model.trim="quoteForm.email" class="input" type="email" />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="m6 8 6 5 6-5"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <input id="qEmail" v-model.trim="quoteForm.email" class="input input--withIcon" type="email" />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label" for="qService">Type de travaux</label>
-                <select id="qService" v-model="quoteForm.type" class="input" required>
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M3.5 10.5 12 5l8.5 5.5V19a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8.5Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9 21v-7a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 14v7"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <select id="qService" v-model="quoteForm.type" class="input input--withIcon" required>
                   <option value="" disabled>Sélectionner…</option>
                   <option v-for="s in serviceTypeOptions" :key="s" :value="s">{{ s }}</option>
-                </select>
+                  </select>
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label" for="qLocation">Localisation</label>
-                <input id="qLocation" v-model.trim="quoteForm.location" class="input" required />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </span>
+                  <input id="qLocation" v-model.trim="quoteForm.location" class="input input--withIcon" required />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label" for="qMessage">Détails</label>
-                <textarea
-                  id="qMessage"
-                  v-model.trim="quoteForm.message"
-                  class="input min-h-28"
-                  required
-                ></textarea>
+                <div class="inputGroup inputGroup--textarea">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 8h10M7 12h7"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </span>
+                  <textarea
+                    id="qMessage"
+                    v-model.trim="quoteForm.message"
+                    class="input input--withIcon min-h-28"
+                    required
+                  ></textarea>
+                </div>
               </div>
               <div class="flex flex-wrap items-center gap-3">
                 <button class="btn btn-primary" type="submit">Envoyer</button>
@@ -462,20 +619,66 @@
           <div class="grid gap-3">
             <div class="grid gap-1">
               <label class="label" for="mName">Nom</label>
-              <input id="mName" v-model.trim="messageForm.name" class="input" required />
+              <div class="inputGroup">
+                <span class="inputIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M20 21a8 8 0 0 0-16 0"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </span>
+                <input id="mName" v-model.trim="messageForm.name" class="input input--withIcon" required />
+              </div>
             </div>
             <div class="grid gap-1">
               <label class="label" for="mContact">Téléphone / Email</label>
-              <input id="mContact" v-model.trim="messageForm.contact" class="input" required />
+              <div class="inputGroup">
+                <span class="inputIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6.5 3.5h2.2c.6 0 1.1.4 1.2 1l.6 3c.1.6-.2 1.1-.7 1.3l-1.7.7a12.7 12.7 0 0 0 6.6 6.6l.7-1.7c.2-.5.7-.8 1.3-.7l3 .6c.6.1 1 .6 1 1.2v2.2c0 .7-.5 1.3-1.2 1.4-8.7 1.1-15.6-5.8-14.5-14.5.1-.7.7-1.2 1.4-1.2Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <input id="mContact" v-model.trim="messageForm.contact" class="input input--withIcon" required />
+              </div>
             </div>
             <div class="grid gap-1">
               <label class="label" for="mText">Message</label>
-              <textarea
-                id="mText"
-                v-model.trim="messageForm.message"
-                class="input min-h-28"
-                required
-              ></textarea>
+              <div class="inputGroup inputGroup--textarea">
+                <span class="inputIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M7 8h10M7 12h7"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </span>
+                <textarea
+                  id="mText"
+                  v-model.trim="messageForm.message"
+                  class="input input--withIcon min-h-28"
+                  required
+                ></textarea>
+              </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <button class="btn btn-primary" type="submit">Envoyer</button>
@@ -492,7 +695,7 @@
       <div class="mx-auto max-w-6xl px-4 py-8">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div class="text-sm text-slate-600">
-            © {{ new Date().getFullYear() }} Staff Technique Madagascar — Démo statique (GitHub Pages).
+            © {{ new Date().getFullYear() }} {{ pages?.identity?.companyName || 'Staff Technique Madagascar' }} — Démo statique (GitHub Pages).
           </div>
           <div class="flex flex-wrap gap-2">
             <a class="btn btn-outline btn-sm" :href="waLink">WhatsApp</a>

@@ -53,18 +53,66 @@
           <div class="grid gap-3">
             <div class="grid gap-1">
               <label class="label" for="email">Email</label>
-              <input id="email" class="input" v-model.trim="loginForm.email" type="email" required />
+              <div class="inputGroup">
+                <span class="inputIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="m6 8 6 5 6-5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <input
+                  id="email"
+                  class="input input--withIcon"
+                  v-model.trim="loginForm.email"
+                  type="email"
+                  required
+                />
+              </div>
             </div>
             <div class="grid gap-1">
               <label class="label" for="password">Mot de passe</label>
-              <input
-                id="password"
-                class="input"
-                v-model="loginForm.password"
-                type="password"
-                required
-                autocomplete="current-password"
-              />
+              <div class="inputGroup">
+                <span class="inputIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M7 10V8a5 5 0 0 1 10 0v2"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M6.5 21h11A2.5 2.5 0 0 0 20 18.5v-6A2.5 2.5 0 0 0 17.5 10h-11A2.5 2.5 0 0 0 4 12.5v6A2.5 2.5 0 0 0 6.5 21Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M12 15.25v2.5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <input
+                  id="password"
+                  class="input input--withIcon"
+                  v-model="loginForm.password"
+                  type="password"
+                  required
+                  autocomplete="current-password"
+                />
+              </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
@@ -92,75 +140,282 @@
           <p class="sectionSubtitle">Statistiques et modules CRUD.</p>
         </div>
 
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="stat">
-            <div class="statNumber">{{ metrics.visits }}</div>
-            <div class="statLabel">Visites (démo)</div>
+        <div class="dashGrid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="stat dashCard dashCard--blue">
+            <div class="dashCardRow">
+              <div>
+                <div class="statNumber">{{ metrics.visits }}</div>
+                <div class="statLabel">Visites (démo)</div>
+              </div>
+              <div class="dashIcon" aria-hidden="true" title="Visites">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="stat">
-            <div class="statNumber">{{ metrics.quotes }}</div>
-            <div class="statLabel">Demandes de devis</div>
+          <div class="stat dashCard dashCard--orange">
+            <div class="dashCardRow">
+              <div>
+                <div class="statNumber">{{ metrics.quotes }}</div>
+                <div class="statLabel">Demandes de devis</div>
+              </div>
+              <div class="dashIcon" aria-hidden="true" title="Devis">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M7 7h10M7 12h10M7 17h6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="stat">
-            <div class="statNumber">{{ metrics.projects }}</div>
-            <div class="statLabel">Projets publiés</div>
+          <div class="stat dashCard dashCard--indigo">
+            <div class="dashCardRow">
+              <div>
+                <div class="statNumber">{{ metrics.projects }}</div>
+                <div class="statLabel">Projets publiés</div>
+              </div>
+              <div class="dashIcon" aria-hidden="true" title="Projets">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M8 9h8M8 12h6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="stat">
-            <div class="statNumber">{{ metrics.messages }}</div>
-            <div class="statLabel">Messages</div>
+          <div class="stat dashCard dashCard--emerald">
+            <div class="dashCardRow">
+              <div>
+                <div class="statNumber">{{ metrics.messages }}</div>
+                <div class="statLabel">Messages</div>
+              </div>
+              <div class="dashIcon" aria-hidden="true" title="Messages">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-8.7L5 21v-2.6A2.5 2.5 0 0 1 4 16.5v-9Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M7 9h10M7 12h7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="mt-6 flex flex-wrap gap-2">
           <button class="chip" :class="{ 'chip--active': tab === 'services' }" @click="tab='services'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2l3 6 6 3-6 3-3 6-3-6-6-3 6-3 3-6Z" stroke="currentColor" stroke-width="2" />
+              </svg>
+            </span>
             Services
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'projects' }" @click="tab='projects'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
             Réalisations
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'articles' }" @click="tab='articles'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </span>
             Articles
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'testimonials' }" @click="tab='testimonials'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </span>
             Témoignages
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'quotes' }" @click="tab='quotes'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 7h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </span>
             Devis
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'messages' }" @click="tab='messages'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-8.7L5 21v-2.6A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M7 9h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
             Messages
           </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'principal' }" @click="tab='principal'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2l3 6 6 3-6 3-3 6-3-6-6-3 6-3 3-6Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </span>
+            Principal
+          </button>
           <button class="chip" :class="{ 'chip--active': tab === 'pages' }" @click="tab='pages'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 3h10a2 2 0 0 1 2 2v16l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </span>
             Pages statiques
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'partners' }" @click="tab='partners'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2l2.5 5 5 2.5-5 2.5-2.5 5-2.5-5-5-2.5 5-2.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </span>
             Partenaires
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'security' }" @click="tab='security'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2 20 6v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M9.5 12.5 11 14l3.5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
             Sécurité
           </button>
           <button class="chip" :class="{ 'chip--active': tab === 'tools' }" @click="tab='tools'" type="button">
+            <span class="chipIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 7a4 4 0 1 1-7 3.2L2 15l3 3 4.8-5A4 4 0 0 1 14 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </span>
             Outils
           </button>
         </div>
 
         <!-- SERVICES -->
-        <section v-if="tab==='services'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='services'" class="adminSection adminSection--services mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="saveService">
               <h2 class="font-semibold">Service</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label" for="svcTitle">Titre</label>
-                  <input id="svcTitle" class="input" v-model.trim="serviceForm.title" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 7h10M7 12h10M7 17h6"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                      </svg>
+                    </span>
+                    <input
+                      id="svcTitle"
+                      class="input input--withIcon"
+                      v-model.trim="serviceForm.title"
+                      required
+                    />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label" for="svcCategory">Catégorie</label>
-                  <input id="svcCategory" class="input" v-model.trim="serviceForm.category" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M8 9h8M8 12h6"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </span>
+                    <input
+                      id="svcCategory"
+                      class="input input--withIcon"
+                      v-model.trim="serviceForm.category"
+                      required
+                    />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label" for="svcDesc">Description</label>
-                  <textarea id="svcDesc" class="input min-h-24" v-model.trim="serviceForm.description" required></textarea>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 8h10M7 12h7"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                      </svg>
+                    </span>
+                    <textarea
+                      id="svcDesc"
+                      class="input input--withIcon min-h-24"
+                      v-model.trim="serviceForm.description"
+                      required
+                    ></textarea>
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Image</label>
@@ -206,34 +461,81 @@
         </section>
 
         <!-- PROJECTS -->
-        <section v-if="tab==='projects'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='projects'" class="adminSection adminSection--projects mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="saveProject">
               <h2 class="font-semibold">Réalisation</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Titre</label>
-                  <input class="input" v-model.trim="projectForm.title" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="projectForm.title" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Catégorie</label>
-                  <input class="input" v-model.trim="projectForm.category" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 9h8M8 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="projectForm.category" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Type de travaux</label>
-                  <input class="input" v-model.trim="projectForm.type" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M14 7a4 4 0 1 1-7 3.2L2 15l3 3 4.8-5A4 4 0 0 1 14 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="projectForm.type" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Localisation</label>
-                  <input class="input" v-model.trim="projectForm.location" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="projectForm.location" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Description</label>
-                  <textarea class="input min-h-24" v-model.trim="projectForm.description" required></textarea>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-24" v-model.trim="projectForm.description" required></textarea>
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Images (liste)</label>
-                  <input class="input" v-model.trim="projectImagesCsv" placeholder="url1, url2, url3" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="projectImagesCsv" placeholder="url1, url2, url3" />
+                  </div>
                   <input type="file" accept="image/*" multiple @change="onPickImage($event, 'project')" />
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -268,27 +570,60 @@
         </section>
 
         <!-- ARTICLES -->
-        <section v-if="tab==='articles'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='articles'" class="adminSection adminSection--articles mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="saveArticle">
               <h2 class="font-semibold">Article / Blog</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Titre</label>
-                  <input class="input" v-model.trim="articleForm.title" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="articleForm.title" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Auteur</label>
-                  <input class="input" v-model.trim="articleForm.author" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="articleForm.author" />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Date</label>
-                  <input class="input" v-model="articleForm.date" type="date" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 8h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.5 21h11A2.5 2.5 0 0 0 20 18.5v-11A2.5 2.5 0 0 0 17.5 5h-11A2.5 2.5 0 0 0 4 7.5v11A2.5 2.5 0 0 0 6.5 21Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model="articleForm.date" type="date" />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Image</label>
                   <div class="flex flex-wrap items-center gap-2">
-                    <input class="input" v-model.trim="articleForm.image" placeholder="./assets/images/hero.svg" />
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="articleForm.image" placeholder="./assets/images/hero.svg" />
+                    </div>
                     <input type="file" accept="image/*" @change="onPickImage($event, 'article')" />
                   </div>
                   <p class="text-xs text-slate-400">
@@ -297,7 +632,15 @@
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Contenu</label>
-                  <textarea class="input min-h-40" v-model.trim="articleForm.content" required></textarea>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-40" v-model.trim="articleForm.content" required></textarea>
+                  </div>
                   <p class="text-xs text-slate-400">
                     Éditeur riche (WYSIWYG) non inclus pour rester léger, mais on peut l’ajouter plus tard.
                   </p>
@@ -340,35 +683,71 @@
         </section>
 
         <!-- TESTIMONIALS -->
-        <section v-if="tab==='testimonials'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='testimonials'" class="adminSection adminSection--testimonials mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="saveTestimonial">
               <h2 class="font-semibold">Témoignage</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Nom</label>
-                  <input class="input" v-model.trim="testimonialForm.name" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="testimonialForm.name" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Type (ex: Entreprise)</label>
-                  <input class="input" v-model.trim="testimonialForm.company" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 21V6a2 2 0 0 1 2-2h7v17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M13 9h5a2 2 0 0 1 2 2v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M7 8h2M7 12h2M7 16h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="testimonialForm.company" />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Note (1-5)</label>
-                  <input class="input" v-model.number="testimonialForm.rating" type="number" min="1" max="5" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l2.6 5.6 6.1.6-4.6 4 1.4 6-5.5-3.2-5.5 3.2 1.4-6-4.6-4 6.1-.6L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.number="testimonialForm.rating" type="number" min="1" max="5" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Message</label>
-                  <textarea class="input min-h-28" v-model.trim="testimonialForm.message" required></textarea>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-8.7L5 21v-2.6A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M7 9h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-28" v-model.trim="testimonialForm.message" required></textarea>
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Photo (optionnel)</label>
                   <div class="flex flex-wrap items-center gap-2">
-                    <input
-                      class="input"
-                      v-model.trim="testimonialForm.photo"
-                      placeholder="./assets/images/user.svg"
-                    />
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="testimonialForm.photo" placeholder="./assets/images/user.svg" />
+                    </div>
                     <input type="file" accept="image/*" @change="onPickImage($event, 'testimonial')" />
                   </div>
                   <p class="text-xs text-slate-400">
@@ -413,7 +792,7 @@
         </section>
 
         <!-- QUOTES -->
-        <section v-if="tab==='quotes'" class="mt-6">
+        <section v-if="tab==='quotes'" class="adminSection adminSection--quotes mt-6">
           <div class="card">
             <div class="flex items-center justify-between">
               <h2 class="font-semibold">Demandes de devis</h2>
@@ -458,7 +837,7 @@
         </section>
 
         <!-- MESSAGES -->
-        <section v-if="tab==='messages'" class="mt-6">
+        <section v-if="tab==='messages'" class="adminSection adminSection--messages mt-6">
           <div class="card">
             <div class="flex items-center justify-between">
               <h2 class="font-semibold">Messages reçus</h2>
@@ -483,30 +862,227 @@
           </div>
         </section>
 
+        <!-- PRINCIPAL -->
+        <section v-if="tab==='principal'" class="adminSection adminSection--pages mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="savePages">
+              <h2 class="font-semibold">Identité & Cover</h2>
+              <p class="mt-1 text-xs text-slate-500">
+                Ces champs pilotent le header et la cover du site public.
+              </p>
+
+              <div class="mt-4 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Nom de l’entreprise</label>
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 21V6a2 2 0 0 1 2-2h7v17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M13 9h5a2 2 0 0 1 2 2v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M7 8h2M7 12h2M7 16h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="pagesForm.identity.companyName" required />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Slogan</label>
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M7 9h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="pagesForm.identity.slogan" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Logo (URL / chemin)</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="pagesForm.identity.logo" placeholder="./assets/images/logo.svg" />
+                    </div>
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'principalLogo')" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Cover image (URL / chemin)</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="pagesForm.identity.coverImage" placeholder="./assets/images/hero.svg" />
+                    </div>
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'principalCover')" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Titre cover</label>
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="pagesForm.identity.coverTitle" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Texte cover</label>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-24" v-model.trim="pagesForm.identity.coverText"></textarea>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">Enregistrer</button>
+                  <span v-if="savedNotice" class="text-sm text-emerald-700">Sauvegardé.</span>
+                </div>
+              </div>
+            </form>
+
+            <form class="card" @submit.prevent="savePages">
+              <h2 class="font-semibold">Projet sous cover</h2>
+              <p class="mt-1 text-xs text-slate-500">Bloc mis en avant sous la cover (image + titre + description).</p>
+
+              <div class="mt-4 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Image</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="pagesForm.identity.coverProject.image" placeholder="./assets/images/hero.svg" />
+                    </div>
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'principalCoverProject')" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Titre</label>
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="pagesForm.identity.coverProject.title" />
+                  </div>
+                </div>
+
+                <div class="grid gap-1">
+                  <label class="label">Description</label>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-24" v-model.trim="pagesForm.identity.coverProject.description"></textarea>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">Enregistrer</button>
+                  <span v-if="savedNotice" class="text-sm text-emerald-700">Sauvegardé.</span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
         <!-- PAGES -->
-        <section v-if="tab==='pages'" class="mt-6">
+        <section v-if="tab==='pages'" class="adminSection adminSection--pages mt-6">
           <form class="card" @submit.prevent="savePages">
             <h2 class="font-semibold">Pages statiques</h2>
             <div class="mt-3 grid gap-3">
               <div class="grid gap-1">
                 <label class="label">À propos</label>
-                <textarea class="input min-h-24" v-model.trim="pagesForm.about"></textarea>
+                <div class="inputGroup inputGroup--textarea">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </span>
+                  <textarea class="input input--withIcon min-h-24" v-model.trim="pagesForm.about"></textarea>
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label">Zones d’intervention</label>
-                <input class="input" v-model.trim="pagesForm.zones" />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </span>
+                  <input class="input input--withIcon" v-model.trim="pagesForm.zones" />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label">Contact — Téléphone</label>
-                <input class="input" v-model.trim="pagesForm.contact.phone" />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M6.5 3.5h2.2c.6 0 1.1.4 1.2 1l.6 3c.1.6-.2 1.1-.7 1.3l-1.7.7a12.7 12.7 0 0 0 6.6 6.6l.7-1.7c.2-.5.7-.8 1.3-.7l3 .6c.6.1 1 .6 1 1.2v2.2c0 .7-.5 1.3-1.2 1.4-8.7 1.1-15.6-5.8-14.5-14.5.1-.7.7-1.2 1.4-1.2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <input class="input input--withIcon" v-model.trim="pagesForm.contact.phone" />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label">Contact — WhatsApp</label>
-                <input class="input" v-model.trim="pagesForm.contact.whatsapp" />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-8.7L5 21v-2.6A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M7 9h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <input class="input input--withIcon" v-model.trim="pagesForm.contact.whatsapp" />
+                </div>
               </div>
               <div class="grid gap-1">
                 <label class="label">Contact — Email</label>
-                <input class="input" v-model.trim="pagesForm.contact.email" type="email" />
+                <div class="inputGroup">
+                  <span class="inputIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                      <path d="m6 8 6 5 6-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <input class="input input--withIcon" v-model.trim="pagesForm.contact.email" type="email" />
+                </div>
               </div>
 
               <div class="flex flex-wrap gap-2">
@@ -522,11 +1098,27 @@
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Question</label>
-                  <input class="input" v-model.trim="faqForm.q" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-8.7L5 21v-2.6A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M8 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="faqForm.q" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Réponse</label>
-                  <textarea class="input min-h-24" v-model.trim="faqForm.a" required></textarea>
+                  <div class="inputGroup inputGroup--textarea">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 8h10M7 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 21h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </span>
+                    <textarea class="input input--withIcon min-h-24" v-model.trim="faqForm.a" required></textarea>
+                  </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button class="btn btn-primary" type="submit">{{ faqForm.id ? 'Mettre à jour' : 'Créer' }}</button>
@@ -557,19 +1149,36 @@
         </section>
 
         <!-- PARTNERS -->
-        <section v-if="tab==='partners'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='partners'" class="adminSection adminSection--partners mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="savePartner">
               <h2 class="font-semibold">Partenaire</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Nom</label>
-                  <input class="input" v-model.trim="partnerForm.name" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 21V6a2 2 0 0 1 2-2h7v17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M13 9h5a2 2 0 0 1 2 2v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M7 8h2M7 12h2M7 16h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="partnerForm.name" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Logo</label>
                   <div class="flex flex-wrap items-center gap-2">
-                    <input class="input" v-model.trim="partnerForm.logo" placeholder="./assets/images/logo.svg" />
+                    <div class="inputGroup" style="flex: 1 1 18rem;">
+                      <span class="inputIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m8 14 2-2 3 3 2-2 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <input class="input input--withIcon" v-model.trim="partnerForm.logo" placeholder="./assets/images/logo.svg" />
+                    </div>
                     <input type="file" accept="image/*" @change="onPickImage($event, 'partner')" />
                   </div>
                   <p class="text-xs text-slate-400">
@@ -607,22 +1216,46 @@
         </section>
 
         <!-- SECURITY -->
-        <section v-if="tab==='security'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='security'" class="adminSection adminSection--security mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <form class="card" @submit.prevent="changePassword">
               <h2 class="font-semibold">Changer le mot de passe</h2>
               <div class="mt-3 grid gap-3">
                 <div class="grid gap-1">
                   <label class="label">Email admin</label>
-                  <input class="input" v-model.trim="securityForm.email" type="email" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="m6 8 6 5 6-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model.trim="securityForm.email" type="email" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Nouveau mot de passe</label>
-                  <input class="input" v-model="securityForm.newPassword" type="password" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 10V8a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.5 21h11A2.5 2.5 0 0 0 20 18.5v-6A2.5 2.5 0 0 0 17.5 10h-11A2.5 2.5 0 0 0 4 12.5v6A2.5 2.5 0 0 0 6.5 21Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model="securityForm.newPassword" type="password" required />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Confirmer</label>
-                  <input class="input" v-model="securityForm.newPassword2" type="password" required />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2 20 6v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M9.5 12.5 11 14l3.5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" v-model="securityForm.newPassword2" type="password" required />
+                  </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button class="btn btn-primary" type="submit">Mettre à jour</button>
@@ -639,15 +1272,41 @@
               <form class="mt-3 grid gap-3" @submit.prevent="saveSecurityParams">
                 <div class="grid gap-1">
                   <label class="label">Verrou après (échecs)</label>
-                  <input class="input" type="number" min="3" max="20" v-model.number="securityParams.lockAfterFailures" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2 20 6v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" type="number" min="3" max="20" v-model.number="securityParams.lockAfterFailures" />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Durée verrou (minutes)</label>
-                  <input class="input" type="number" min="1" max="120" v-model.number="securityParams.lockMinutes" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" type="number" min="1" max="120" v-model.number="securityParams.lockMinutes" />
+                  </div>
                 </div>
                 <div class="grid gap-1">
                   <label class="label">Durée session (minutes)</label>
-                  <input class="input" type="number" min="5" max="240" v-model.number="securityParams.sessionMinutes" />
+                  <div class="inputGroup">
+                    <span class="inputIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 7v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 12l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <input class="input input--withIcon" type="number" min="5" max="240" v-model.number="securityParams.sessionMinutes" />
+                  </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button class="btn btn-primary" type="submit">Enregistrer</button>
@@ -659,8 +1318,8 @@
         </section>
 
         <!-- TOOLS -->
-        <section v-if="tab==='tools'" class="mt-6">
-          <div class="grid gap-6 lg:grid-cols-2">
+        <section v-if="tab==='tools'" class="adminSection adminSection--tools mt-6">
+          <div class="adminSectionInner grid gap-6 lg:grid-cols-2">
             <div class="card">
               <h2 class="font-semibold">Sauvegarde / restauration</h2>
               <div class="mt-3 flex flex-wrap gap-2">

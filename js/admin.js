@@ -17,6 +17,44 @@ syncJsonMirror();
 const SESSION_KEY = `${keys.security}:session`;
 const LOCK_KEY = `${keys.security}:lock`;
 
+const DEFAULT_PAGES = {
+  identity: {
+    companyName: "Staff Technique Madagascar",
+    slogan: "Finition • Décoration • Bâtiment",
+    logo: "./assets/images/logo.svg",
+    coverImage: "./assets/images/hero.svg",
+    coverTitle: "Donnez une finition professionnelle à vos espaces.",
+    coverText:
+      "Plafonds, peinture, cloisons, sols, électricité et mobilier — une équipe organisée, des matériaux de qualité, un rendu propre.",
+    coverProject: {
+      image: "./assets/images/hero.svg",
+      title: "Projet vitrine (démo)",
+      description: "Un exemple de projet mis en avant sous la cover.",
+    },
+  },
+  about: "",
+  zones: "",
+  contact: { phone: "", whatsapp: "", email: "" },
+};
+
+function normalizePages(pages) {
+  const p = pages && typeof pages === "object" ? pages : {};
+  const id = p.identity && typeof p.identity === "object" ? p.identity : {};
+  const cp = id.coverProject && typeof id.coverProject === "object" ? id.coverProject : {};
+  const contact = p.contact && typeof p.contact === "object" ? p.contact : {};
+
+  return {
+    ...DEFAULT_PAGES,
+    ...p,
+    contact: { ...DEFAULT_PAGES.contact, ...contact },
+    identity: {
+      ...DEFAULT_PAGES.identity,
+      ...id,
+      coverProject: { ...DEFAULT_PAGES.identity.coverProject, ...cp },
+    },
+  };
+}
+
 function buildJsonMirror() {
   return {
     version: "dolice_v1",
@@ -152,7 +190,7 @@ Vue.createApp({
       quotes: getJson(keys.quotes, []),
       messages: getJson(keys.messages, []),
       partners: getJson(keys.partners, []),
-      pagesForm: getJson(keys.pages, { about: "", zones: "", contact: { phone: "", whatsapp: "", email: "" } }),
+      pagesForm: normalizePages(getJson(keys.pages, DEFAULT_PAGES)),
       faqs: getJson(`${keys.pages}:faq`, []),
 
       metrics: { visits: Number(localStorage.getItem(keys.visits) || "0"), quotes: 0, projects: 0, messages: 0 },
@@ -201,7 +239,7 @@ Vue.createApp({
       this.quotes = getJson(keys.quotes, []);
       this.messages = getJson(keys.messages, []);
       this.partners = getJson(keys.partners, []);
-      this.pagesForm = getJson(keys.pages, { about: "", zones: "", contact: { phone: "", whatsapp: "", email: "" } });
+      this.pagesForm = normalizePages(getJson(keys.pages, DEFAULT_PAGES));
       this.faqs = getJson(`${keys.pages}:faq`, []);
       this.activity = getJson(keys.activityLog, []);
       this.refreshMetrics();
@@ -294,6 +332,9 @@ Vue.createApp({
           if (target === "article") this.articleForm.image = url;
           if (target === "partner") this.partnerForm.logo = url;
           if (target === "testimonial") this.testimonialForm.photo = url;
+          if (target === "principalLogo") this.pagesForm.identity.logo = url;
+          if (target === "principalCover") this.pagesForm.identity.coverImage = url;
+          if (target === "principalCoverProject") this.pagesForm.identity.coverProject.image = url;
 
           // Télécharge le fichier pour que l'utilisateur puisse le déposer dans:
           // assets/images/<module>/...

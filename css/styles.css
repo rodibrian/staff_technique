@@ -4,14 +4,39 @@
 */
 
 :root {
-  --bp-blue: #0b2a55;
-  --bp-blue-2: #0f3c8a;
-  --bp-accent: #f97316;
-  --bp-slate: #0f172a;
-  --bp-muted: #64748b;
-  --bp-border: #e2e8f0;
+  /*
+    Flat UI Colors (DEFO) palette
+    Source: https://flatuicolors.com/palette/defo
+  */
+  --p-turquoise: #1abc9c;
+  --p-green-sea: #16a085;
+  --p-emerald: #2ecc71;
+  --p-nephritis: #27ae60;
+  --p-peter-river: #3498db;
+  --p-belize-hole: #2980b9;
+  --p-amethyst: #9b59b6;
+  --p-wisteria: #8e44ad;
+  --p-wet-asphalt: #34495e;
+  --p-midnight-blue: #2c3e50;
+  --p-sun-flower: #f1c40f;
+  --p-orange: #f39c12;
+  --p-carrot: #e67e22;
+  --p-pumpkin: #d35400;
+  --p-alizarin: #e74c3c;
+  --p-pomegranate: #c0392b;
+  --p-clouds: #ecf0f1;
+  --p-silver: #bdc3c7;
+  --p-concrete: #95a5a6;
+  --p-asbestos: #7f8c8d;
+
+  /* Project tokens (mapped from palette) */
+  --bp-slate: var(--p-midnight-blue);
+  --bp-muted: var(--p-asbestos);
+  --bp-border: rgba(189, 195, 199, 0.7);
   --bp-surface: #ffffff;
-  --bp-soft: #f8fafc;
+  --bp-soft: rgba(236, 240, 241, 0.85);
+  --bp-accent: var(--p-carrot);
+  --bp-primary: var(--p-belize-hole);
 }
 
 html {
@@ -230,11 +255,170 @@ body {
   padding: 0.65rem 0.75rem;
   font-size: 0.9rem;
   outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 .input:focus {
   border-color: rgb(147 197 253); /* blue-300 */
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
+
+.inputGroup {
+  position: relative;
+}
+.inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  width: 1.05rem;
+  height: 1.05rem;
+  color: rgba(100, 116, 139, 0.75);
+  pointer-events: none;
+}
+.inputIcon svg {
+  width: 100%;
+  height: 100%;
+}
+.input--withIcon {
+  padding-left: 2.4rem;
+}
+.inputGroup--textarea .inputIcon {
+  top: 0.95rem;
+  transform: none;
+}
+.inputGroup--textarea .input--withIcon {
+  padding-top: 0.75rem;
+}
+.input::placeholder {
+  color: rgba(100, 116, 139, 0.55);
+}
+.input:hover {
+  background: rgba(248, 250, 252, 0.7);
+}
+
+/* Admin/forms polish */
+.card h2 {
+  letter-spacing: -0.01em;
+}
+.card > h2 {
+  font-family: Manrope, Inter, ui-sans-serif, system-ui;
+  font-weight: 800;
+}
+.card > h3 {
+  font-family: Manrope, Inter, ui-sans-serif, system-ui;
+}
+
+/* ---------- Admin: dashboard cards ---------- */
+.dashGrid .stat {
+  position: relative;
+  overflow: hidden;
+}
+.dashGrid .stat::after {
+  content: "";
+  position: absolute;
+  inset: -40% -30% auto auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.55), transparent 55%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.dashCard {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.85));
+}
+.dashCardRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.dashIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.95rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.65);
+  color: rgba(15, 23, 42, 0.82);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.08);
+}
+.dashIcon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.dashCard--blue {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.18), rgba(255, 255, 255, 0.92));
+  border-color: rgba(41, 128, 185, 0.35);
+}
+.dashCard--orange {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.18), rgba(255, 255, 255, 0.93));
+  border-color: rgba(211, 84, 0, 0.32);
+}
+.dashCard--indigo {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.16), rgba(255, 255, 255, 0.93));
+  border-color: rgba(142, 68, 173, 0.3);
+}
+.dashCard--emerald {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.16), rgba(255, 255, 255, 0.93));
+  border-color: rgba(39, 174, 96, 0.28);
+}
+
+/* ---------- Admin: tabs with icons ---------- */
+.chipIcon {
+  width: 1rem;
+  height: 1rem;
+  display: inline-grid;
+  place-items: center;
+  margin-right: 0.35rem;
+  color: rgba(71, 85, 105, 0.95);
+}
+.chipIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ---------- Admin: section tint ---------- */
+.adminSection {
+  border-radius: 1.25rem;
+  padding: 0.25rem;
+}
+.adminSection > .adminSectionInner {
+  border-radius: 1.1rem;
+}
+.adminSection--services {
+  background: linear-gradient(180deg, rgba(52, 152, 219, 0.12), transparent);
+}
+.adminSection--projects {
+  background: linear-gradient(180deg, rgba(155, 89, 182, 0.11), transparent);
+}
+.adminSection--articles {
+  background: linear-gradient(180deg, rgba(241, 196, 15, 0.13), transparent);
+}
+.adminSection--testimonials {
+  background: linear-gradient(180deg, rgba(46, 204, 113, 0.11), transparent);
+}
+.adminSection--quotes {
+  background: linear-gradient(180deg, rgba(230, 126, 34, 0.12), transparent);
+}
+.adminSection--messages {
+  background: linear-gradient(180deg, rgba(236, 240, 241, 0.9), transparent);
+}
+.adminSection--pages {
+  background: linear-gradient(180deg, rgba(26, 188, 156, 0.12), transparent);
+}
+.adminSection--partners {
+  background: linear-gradient(180deg, rgba(52, 152, 219, 0.09), transparent);
+}
+.adminSection--security {
+  background: linear-gradient(180deg, rgba(231, 76, 60, 0.1), transparent);
+}
+.adminSection--tools {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), transparent);
+}
+
 
 .chip {
   border-radius: 9999px;
@@ -291,6 +475,21 @@ body {
 }
 .swiper-pagination-bullet-active {
   background: linear-gradient(90deg, rgba(37, 99, 235, 0.95), rgba(249, 115, 22, 0.95));
+}
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  line-height: 1;
+}
+.star {
+  font-size: 0.9rem;
+  color: rgba(100, 116, 139, 0.45); /* slate-500 soft */
+}
+.star--on {
+  color: rgba(245, 158, 11, 0.95); /* amber-500 */
+  text-shadow: 0 6px 14px rgba(245, 158, 11, 0.22);
 }
 
 /* clamp helpers without needing Tailwind plugin */
