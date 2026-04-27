@@ -10,7 +10,7 @@
 import { ensureSeed } from "./lib/seed.js";
 import { keys, getJson, setJson, remove, pushLog } from "./lib/storage.js";
 import { uid, nowIso, formatDateFr, excerptText, clamp, isNonEmptyString } from "./lib/utils.js";
-import { uploadImageUnsigned } from "./lib/cloudinary.js";
+import { uploadImageUnsigned, uploadRawUnsigned, cloudinaryRawUrl } from "./lib/cloudinary.js";
 
 ensureSeed();
 syncJsonMirror();
@@ -201,7 +201,16 @@ Vue.createApp({
       toolNotice: "",
       toolError: "",
 
-      cloudinaryForm: getJson(keys.cloudinary, { enabled: false, cloudName: "", uploadPreset: "", folder: "dolice" }),
+      cloudinaryForm: getJson(keys.cloudinary, {
+        enabled: false,
+        cloudName: "",
+        uploadPreset: "",
+        folder: "dolice",
+        // Centralisation des contenus (JSON) entre appareils
+        contentSyncEnabled: false,
+        contentPublicId: "dolice/content",
+        contentUrl: "",
+      }),
       uploadNotice: "",
       uploadError: "",
 
@@ -313,10 +322,108 @@ Vue.createApp({
 
     saveCloudinaryConfig() {
       if (!this.guard()) return;
+      // Déduit une URL de lecture "stable" si possible
+      if (this.cloudinaryForm.cloudName && this.cloudinaryForm.contentPublicId) {
+        this.cloudinaryForm.contentUrl = cloudinaryRawUrl({
+          cloudName: this.cloudinaryForm.cloudName,
+          publicId: this.cloudinaryForm.contentPublicId,
+          format: "json",
+        });
+      }
       setJson(keys.cloudinary, this.cloudinaryForm);
       pushLog({ at: nowIso(), action: "CLOUDINARY_SAVE", detail: "config" });
       syncJsonMirror();
       this.notifySaved();
+    },
+
+    async pushContentToCloudinary() {
+      if (!this.guard()) return;
+      this.uploadError = "";
+      this.uploadNotice = "";
+
+      const cfg = getJson(keys.cloudinary, null);
+      const enabled = Boolean(cfg?.enabled && cfg?.cloudName && cfg?.uploadPreset);
+      if (!enabled) {
+        this.uploadError = "Cloudinary n'est pas configuré.";
+        return;
+      }
+      if (!cfg.contentPublicId) {
+        this.uploadError = "contentPublicId manquant.";
+        return;
+      }
+
+      // On push le miroir JSON (déjà utilisé par exportAll).
+      syncJsonMirror();
+      const payload = getJson(keys.jsonMirror, null) || buildJsonMirror();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const file = new File([blob], "content.json", { type: "application/json" });
+
+      const folder = cfg.folder ? `${cfg.folder}/content` : "content";
+      const r = await uploadRawUnsigned({
+        file,
+        cloudName: cfg.cloudName,
+        uploadPreset: cfg.uploadPreset,
+        folder,
+        publicId: cfg.contentPublicId,
+        overwrite: true,
+      });
+
+      // Cloudinary renvoie une URL versionnée fiable pour le dernier upload.
+      const url = r?.url || cloudinaryRawUrl({ cloudName: cfg.cloudName, publicId: cfg.contentPublicId, format: "json" });
+      const next = { ...cfg, contentUrl: url };
+      this.cloudinaryForm = next;
+      setJson(keys.cloudinary, next);
+
+      pushLog({ at: nowIso(), action: "CONTENT_PUSH", detail: url });
+      this.uploadNotice = "Contenu synchronisé sur Cloudinary.";
+    },
+
+    async pullContentFromCloudinary() {
+      if (!this.guard()) return;
+      this.uploadError = "";
+      this.uploadNotice = "";
+
+      const cfg = getJson(keys.cloudinary, null);
+      const url =
+        cfg?.contentUrl ||
+        (cfg?.cloudName && cfg?.contentPublicId
+          ? cloudinaryRawUrl({ cloudName: cfg.cloudName, publicId: cfg.contentPublicId, format: "json" })
+          : "");
+
+      if (!url) {
+        this.uploadError = "URL de contenu Cloudinary manquante.";
+        return;
+      }
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Lecture contenu impossible (${res.status})`);
+      const parsed = await res.json();
+
+      // Supporte le format exportAll: { version, syncedAt/exportedAt, data: {...} }
+      const bagData = parsed?.data || parsed;
+      if (!bagData || typeof bagData !== "object") throw new Error("Format JSON invalide.");
+
+      // Applique comme importAll, sans fichier.
+      const apply = (k, v) => setJson(k, v);
+      apply(keys.admin, bagData.admin || getJson(keys.admin, {}));
+      apply(keys.security, bagData.security || getJson(keys.security, {}));
+      apply(keys.pages, bagData.pages || getJson(keys.pages, {}));
+      apply(`${keys.pages}:faq`, bagData.faqs || getJson(`${keys.pages}:faq`, []));
+      apply(keys.stats, bagData.stats || getJson(keys.stats, {}));
+      apply(keys.services, bagData.services || []);
+      apply(keys.projects, bagData.projects || []);
+      apply(keys.articles, bagData.articles || []);
+      apply(keys.testimonials, bagData.testimonials || []);
+      apply(keys.quotes, bagData.quotes || []);
+      apply(keys.messages, bagData.messages || []);
+      apply(keys.partners, bagData.partners || []);
+      if (typeof bagData.visits === "number") localStorage.setItem(keys.visits, String(bagData.visits));
+      apply(keys.activityLog, bagData.activity || []);
+
+      pushLog({ at: nowIso(), action: "CONTENT_PULL", detail: url });
+      syncJsonMirror();
+      this.reloadAll();
+      this.uploadNotice = "Contenu récupéré depuis Cloudinary.";
     },
 
     async uploadToCloudinaryIfEnabled(file, kind) {
