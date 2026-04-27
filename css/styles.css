@@ -1,0 +1,170 @@
+/*
+  Styles utilitaires légers.
+  La majorité du design vient de Tailwind (CDN) pour rester compatible GitHub Pages (zéro build).
+*/
+
+.navlink {
+  color: rgb(51 65 85); /* slate-700 */
+}
+.navlink:hover {
+  color: rgb(15 23 42); /* slate-900 */
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.1;
+  border: 1px solid transparent;
+  transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: rgb(37 99 235); /* blue-600 */
+  color: white;
+}
+.btn-primary:hover {
+  background: rgb(29 78 216); /* blue-700 */
+}
+.btn-outline {
+  background: white;
+  color: rgb(15 23 42); /* slate-900 */
+  border-color: rgb(226 232 240); /* slate-200 */
+}
+.btn-outline:hover {
+  background: rgb(248 250 252); /* slate-50 */
+}
+.btn-sm {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.8125rem;
+}
+.btn-xs {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 0.65rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgb(255 237 213); /* orange-100 */
+  color: rgb(154 52 18); /* orange-800 */
+}
+.badge-soft {
+  background: rgb(224 231 255); /* indigo-100 */
+  color: rgb(55 48 163); /* indigo-800 */
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid rgb(226 232 240); /* slate-200 */
+  background: white;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(2, 6, 23, 0.04);
+}
+.cardTitle {
+  font-weight: 700;
+}
+.cardText {
+  margin-top: 0.5rem;
+  color: rgb(71 85 105); /* slate-600 */
+  font-size: 0.875rem;
+}
+
+.sectionTitleRow {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+.sectionTitle {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.sectionSubtitle {
+  color: rgb(100 116 139); /* slate-500 */
+  font-size: 0.9rem;
+}
+
+.stat {
+  border-radius: 1rem;
+  border: 1px solid rgb(226 232 240);
+  background: white;
+  padding: 0.75rem;
+}
+.statNumber {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.statLabel {
+  margin-top: 0.1rem;
+  font-size: 0.75rem;
+  color: rgb(100 116 139);
+}
+
+.label {
+  font-size: 0.75rem;
+  color: rgb(71 85 105);
+  font-weight: 700;
+}
+.input {
+  width: 100%;
+  border-radius: 0.8rem;
+  border: 1px solid rgb(226 232 240);
+  background: white;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.9rem;
+  outline: none;
+}
+.input:focus {
+  border-color: rgb(147 197 253); /* blue-300 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.chip {
+  border-radius: 9999px;
+  border: 1px solid rgb(226 232 240);
+  background: white;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgb(51 65 85);
+}
+.chip:hover {
+  background: rgb(248 250 252);
+}
+.chip--active {
+  border-color: rgb(191 219 254);
+  background: rgb(239 246 255);
+  color: rgb(30 64 175);
+}
+
+/* clamp helpers without needing Tailwind plugin */
+.line-clamp-1,
+.line-clamp-2,
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-1 {
+  -webkit-line-clamp: 1;
+}
+.line-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+.line-clamp-3 {
+  -webkit-line-clamp: 3;
+}
+

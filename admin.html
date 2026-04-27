@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Administration — Staff Technique Madagascar</title>
+
+    <!-- Admin 100% statique (GitHub Pages) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+
+  <body class="bg-slate-50 text-slate-900">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+          <img
+            src="./assets/images/logo.svg"
+            alt="Logo"
+            class="h-9 w-9"
+            width="36"
+            height="36"
+            loading="eager"
+          />
+          <div class="leading-tight">
+            <div class="font-semibold">Administration</div>
+            <div class="text-xs text-slate-500">Gestion du contenu (localStorage)</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a class="btn btn-outline btn-sm" href="./index.html">Voir le site</a>
+          <button v-if="session.isAuthed" class="btn btn-outline btn-sm" @click="logout" type="button">
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-8">
+      <!-- Login -->
+      <section v-if="!session.isAuthed" class="mx-auto max-w-xl">
+        <div class="sectionTitleRow">
+          <h1 class="sectionTitle">Connexion admin</h1>
+          <p class="sectionSubtitle">
+            Sécurité “best effort” côté client (GitHub Pages). Changez le mot de passe après la démo.
+          </p>
+        </div>
+
+        <form class="card" @submit.prevent="login">
+          <div class="grid gap-3">
+            <div class="grid gap-1">
+              <label class="label" for="email">Email</label>
+              <input id="email" class="input" v-model.trim="loginForm.email" type="email" required />
+            </div>
+            <div class="grid gap-1">
+              <label class="label" for="password">Mot de passe</label>
+              <input
+                id="password"
+                class="input"
+                v-model="loginForm.password"
+                type="password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <button class="btn btn-primary" type="submit">
+                Se connecter
+              </button>
+              <span v-if="loginError" class="text-sm text-rose-700">{{ loginError }}</span>
+            </div>
+
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+              <div class="font-semibold text-slate-700">Identifiants démo</div>
+              <div class="mt-1">
+                Email: <span class="font-mono">admin@demo.local</span> — Mot de passe:
+                <span class="font-mono">Admin@1234</span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- App admin -->
+      <section v-else>
+        <div class="sectionTitleRow">
+          <h1 class="sectionTitle">Dashboard</h1>
+          <p class="sectionSubtitle">Statistiques et modules CRUD.</p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="stat">
+            <div class="statNumber">{{ metrics.visits }}</div>
+            <div class="statLabel">Visites (démo)</div>
+          </div>
+          <div class="stat">
+            <div class="statNumber">{{ metrics.quotes }}</div>
+            <div class="statLabel">Demandes de devis</div>
+          </div>
+          <div class="stat">
+            <div class="statNumber">{{ metrics.projects }}</div>
+            <div class="statLabel">Projets publiés</div>
+          </div>
+          <div class="stat">
+            <div class="statNumber">{{ metrics.messages }}</div>
+            <div class="statLabel">Messages</div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-2">
+          <button class="chip" :class="{ 'chip--active': tab === 'services' }" @click="tab='services'" type="button">
+            Services
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'projects' }" @click="tab='projects'" type="button">
+            Réalisations
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'articles' }" @click="tab='articles'" type="button">
+            Articles
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'testimonials' }" @click="tab='testimonials'" type="button">
+            Témoignages
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'quotes' }" @click="tab='quotes'" type="button">
+            Devis
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'messages' }" @click="tab='messages'" type="button">
+            Messages
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'pages' }" @click="tab='pages'" type="button">
+            Pages statiques
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'partners' }" @click="tab='partners'" type="button">
+            Partenaires
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'security' }" @click="tab='security'" type="button">
+            Sécurité
+          </button>
+          <button class="chip" :class="{ 'chip--active': tab === 'tools' }" @click="tab='tools'" type="button">
+            Outils
+          </button>
+        </div>
+
+        <!-- SERVICES -->
+        <section v-if="tab==='services'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="saveService">
+              <h2 class="font-semibold">Service</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label" for="svcTitle">Titre</label>
+                  <input id="svcTitle" class="input" v-model.trim="serviceForm.title" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label" for="svcCategory">Catégorie</label>
+                  <input id="svcCategory" class="input" v-model.trim="serviceForm.category" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label" for="svcDesc">Description</label>
+                  <textarea id="svcDesc" class="input min-h-24" v-model.trim="serviceForm.description" required></textarea>
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Image</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <input class="input" v-model.trim="serviceForm.image" placeholder="./assets/images/hero.svg" />
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'service')" />
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    GitHub Pages: le navigateur ne peut pas copier un fichier dans le repo.
+                    L’image est enregistrée en base64 (localStorage) et le fichier est téléchargé pour que vous puissiez le déposer dans `assets/images/services/`.
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ serviceForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetServiceForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ services.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="s in services" :key="s.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <div class="font-semibold">{{ s.title }}</div>
+                      <div class="text-xs text-slate-500">{{ s.category }}</div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editService(s)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deleteService(s.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm text-slate-600 line-clamp-2">{{ s.description }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section v-if="tab==='projects'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="saveProject">
+              <h2 class="font-semibold">Réalisation</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Titre</label>
+                  <input class="input" v-model.trim="projectForm.title" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Catégorie</label>
+                  <input class="input" v-model.trim="projectForm.category" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Type de travaux</label>
+                  <input class="input" v-model.trim="projectForm.type" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Localisation</label>
+                  <input class="input" v-model.trim="projectForm.location" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Description</label>
+                  <textarea class="input min-h-24" v-model.trim="projectForm.description" required></textarea>
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Images (liste)</label>
+                  <input class="input" v-model.trim="projectImagesCsv" placeholder="url1, url2, url3" />
+                  <input type="file" accept="image/*" multiple @change="onPickImage($event, 'project')" />
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ projectForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetProjectForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ projects.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="p in projects" :key="p.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <div class="font-semibold">{{ p.title }}</div>
+                      <div class="text-xs text-slate-500">{{ p.category }} • {{ p.location }}</div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editProject(p)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deleteProject(p.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm text-slate-600 line-clamp-2">{{ p.description }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ARTICLES -->
+        <section v-if="tab==='articles'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="saveArticle">
+              <h2 class="font-semibold">Article / Blog</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Titre</label>
+                  <input class="input" v-model.trim="articleForm.title" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Auteur</label>
+                  <input class="input" v-model.trim="articleForm.author" />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Date</label>
+                  <input class="input" v-model="articleForm.date" type="date" />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Image</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <input class="input" v-model.trim="articleForm.image" placeholder="./assets/images/hero.svg" />
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'article')" />
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    Conseil: mettez vos images dans `assets/images/blog/` (meilleure organisation du projet).
+                  </p>
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Contenu</label>
+                  <textarea class="input min-h-40" v-model.trim="articleForm.content" required></textarea>
+                  <p class="text-xs text-slate-400">
+                    Éditeur riche (WYSIWYG) non inclus pour rester léger, mais on peut l’ajouter plus tard.
+                  </p>
+                </div>
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" v-model="articleForm.published" />
+                  Publier
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ articleForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetArticleForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ articles.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="a in articles" :key="a.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <div class="font-semibold">{{ a.title }}</div>
+                      <div class="text-xs text-slate-500">
+                        {{ a.published ? 'Publié' : 'Brouillon' }} • {{ a.author || '—' }}
+                      </div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editArticle(a)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deleteArticle(a.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm text-slate-600 line-clamp-2">{{ a.content }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TESTIMONIALS -->
+        <section v-if="tab==='testimonials'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="saveTestimonial">
+              <h2 class="font-semibold">Témoignage</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Nom</label>
+                  <input class="input" v-model.trim="testimonialForm.name" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Type (ex: Entreprise)</label>
+                  <input class="input" v-model.trim="testimonialForm.company" />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Note (1-5)</label>
+                  <input class="input" v-model.number="testimonialForm.rating" type="number" min="1" max="5" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Message</label>
+                  <textarea class="input min-h-28" v-model.trim="testimonialForm.message" required></textarea>
+                </div>
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" v-model="testimonialForm.approved" />
+                  Approuvé (visible public)
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ testimonialForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetTestimonialForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ testimonials.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="t in testimonials" :key="t.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <div class="font-semibold">{{ t.name }}</div>
+                      <div class="text-xs text-slate-500">
+                        Note {{ t.rating }}/5 • {{ t.approved ? 'Approuvé' : 'En attente' }}
+                      </div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editTestimonial(t)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deleteTestimonial(t.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm text-slate-600 line-clamp-2">{{ t.message }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUOTES -->
+        <section v-if="tab==='quotes'" class="mt-6">
+          <div class="card">
+            <div class="flex items-center justify-between">
+              <h2 class="font-semibold">Demandes de devis</h2>
+              <div class="flex gap-2">
+                <button class="btn btn-xs btn-outline" type="button" @click="exportQuotes">Exporter JSON</button>
+                <button class="btn btn-xs btn-outline" type="button" @click="clearQuotes">Vider</button>
+              </div>
+            </div>
+            <div class="mt-3 grid gap-3">
+              <div v-if="quotes.length===0" class="text-sm text-slate-500">Aucune demande.</div>
+              <div v-for="q in quotes" :key="q.id" class="rounded-xl border border-slate-200 p-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div class="font-semibold">{{ q.name }} — {{ q.phone }}</div>
+                    <div class="text-xs text-slate-500">
+                      {{ q.type }} • {{ q.location }} • {{ formatIso(q.createdAt) }}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <select class="input !w-auto !py-1" v-model="q.status" @change="updateQuoteStatus(q)">
+                      <option value="nouveau">nouveau</option>
+                      <option value="en cours">en cours</option>
+                      <option value="terminé">terminé</option>
+                    </select>
+                    <button class="btn btn-xs btn-outline" type="button" @click="deleteQuote(q.id)">Supprimer</button>
+                  </div>
+                </div>
+                <div class="mt-2 text-sm text-slate-700 whitespace-pre-wrap">{{ q.message }}</div>
+                <div class="mt-3 grid gap-1">
+                  <label class="label">Réponse admin (optionnel)</label>
+                  <textarea class="input min-h-20" v-model.trim="q.reply" placeholder="Votre réponse…"></textarea>
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="text-xs text-slate-400">Sauvegardé dans le navigateur (démo).</span>
+                    <button class="btn btn-xs btn-outline" type="button" @click="saveQuoteReply(q)">
+                      Enregistrer réponse
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MESSAGES -->
+        <section v-if="tab==='messages'" class="mt-6">
+          <div class="card">
+            <div class="flex items-center justify-between">
+              <h2 class="font-semibold">Messages reçus</h2>
+              <div class="flex gap-2">
+                <button class="btn btn-xs btn-outline" type="button" @click="exportMessages">Exporter JSON</button>
+                <button class="btn btn-xs btn-outline" type="button" @click="clearMessages">Vider</button>
+              </div>
+            </div>
+            <div class="mt-3 grid gap-3">
+              <div v-if="messages.length===0" class="text-sm text-slate-500">Aucun message.</div>
+              <div v-for="m in messages" :key="m.id" class="rounded-xl border border-slate-200 p-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div class="font-semibold">{{ m.name }} — {{ m.contact }}</div>
+                    <div class="text-xs text-slate-500">{{ formatIso(m.createdAt) }}</div>
+                  </div>
+                  <button class="btn btn-xs btn-outline" type="button" @click="deleteMessage(m.id)">Supprimer</button>
+                </div>
+                <div class="mt-2 text-sm text-slate-700 whitespace-pre-wrap">{{ m.message }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGES -->
+        <section v-if="tab==='pages'" class="mt-6">
+          <form class="card" @submit.prevent="savePages">
+            <h2 class="font-semibold">Pages statiques</h2>
+            <div class="mt-3 grid gap-3">
+              <div class="grid gap-1">
+                <label class="label">À propos</label>
+                <textarea class="input min-h-24" v-model.trim="pagesForm.about"></textarea>
+              </div>
+              <div class="grid gap-1">
+                <label class="label">Zones d’intervention</label>
+                <input class="input" v-model.trim="pagesForm.zones" />
+              </div>
+              <div class="grid gap-1">
+                <label class="label">Contact — Téléphone</label>
+                <input class="input" v-model.trim="pagesForm.contact.phone" />
+              </div>
+              <div class="grid gap-1">
+                <label class="label">Contact — WhatsApp</label>
+                <input class="input" v-model.trim="pagesForm.contact.whatsapp" />
+              </div>
+              <div class="grid gap-1">
+                <label class="label">Contact — Email</label>
+                <input class="input" v-model.trim="pagesForm.contact.email" type="email" />
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button class="btn btn-primary" type="submit">Enregistrer</button>
+                <span v-if="savedNotice" class="text-sm text-emerald-700">Sauvegardé.</span>
+              </div>
+            </div>
+          </form>
+
+          <div class="mt-6 grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="saveFaq">
+              <h2 class="font-semibold">FAQ</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Question</label>
+                  <input class="input" v-model.trim="faqForm.q" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Réponse</label>
+                  <textarea class="input min-h-24" v-model.trim="faqForm.a" required></textarea>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ faqForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetFaqForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ faqs.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="f in faqs" :key="f.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="font-semibold">{{ f.q }}</div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editFaq(f)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deleteFaq(f.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm text-slate-600 line-clamp-2">{{ f.a }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PARTNERS -->
+        <section v-if="tab==='partners'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="savePartner">
+              <h2 class="font-semibold">Partenaire</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Nom</label>
+                  <input class="input" v-model.trim="partnerForm.name" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Logo</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <input class="input" v-model.trim="partnerForm.logo" placeholder="./assets/images/logo.svg" />
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'partner')" />
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    Conseil: déposez le logo dans `assets/images/partenariats/` puis mettez le chemin relatif ici.
+                  </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">{{ partnerForm.id ? 'Mettre à jour' : 'Créer' }}</button>
+                  <button class="btn btn-outline" type="button" @click="resetPartnerForm">Nouveau</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="flex items-center justify-between">
+                <h2 class="font-semibold">Liste</h2>
+                <span class="text-xs text-slate-500">{{ partners.length }} élément(s)</span>
+              </div>
+              <div class="mt-3 grid gap-3">
+                <div v-for="p in partners" :key="p.id" class="rounded-xl border border-slate-200 p-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <img :src="p.logo" :alt="p.name" class="h-9 w-9 rounded-lg border border-slate-200 bg-white" />
+                      <div class="font-semibold">{{ p.name }}</div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button class="btn btn-xs btn-outline" @click="editPartner(p)" type="button">Éditer</button>
+                      <button class="btn btn-xs btn-outline" @click="deletePartner(p.id)" type="button">Supprimer</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECURITY -->
+        <section v-if="tab==='security'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <form class="card" @submit.prevent="changePassword">
+              <h2 class="font-semibold">Changer le mot de passe</h2>
+              <div class="mt-3 grid gap-3">
+                <div class="grid gap-1">
+                  <label class="label">Email admin</label>
+                  <input class="input" v-model.trim="securityForm.email" type="email" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Nouveau mot de passe</label>
+                  <input class="input" v-model="securityForm.newPassword" type="password" required />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Confirmer</label>
+                  <input class="input" v-model="securityForm.newPassword2" type="password" required />
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">Mettre à jour</button>
+                  <span v-if="savedNotice" class="text-sm text-emerald-700">Sauvegardé.</span>
+                </div>
+                <p class="text-xs text-slate-500">
+                  Hash SHA‑256 stocké dans le navigateur (localStorage). Pour un vrai site, il faut un backend.
+                </p>
+              </div>
+            </form>
+
+            <div class="card">
+              <h2 class="font-semibold">Paramètres anti brute‑force</h2>
+              <form class="mt-3 grid gap-3" @submit.prevent="saveSecurityParams">
+                <div class="grid gap-1">
+                  <label class="label">Verrou après (échecs)</label>
+                  <input class="input" type="number" min="3" max="20" v-model.number="securityParams.lockAfterFailures" />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Durée verrou (minutes)</label>
+                  <input class="input" type="number" min="1" max="120" v-model.number="securityParams.lockMinutes" />
+                </div>
+                <div class="grid gap-1">
+                  <label class="label">Durée session (minutes)</label>
+                  <input class="input" type="number" min="5" max="240" v-model.number="securityParams.sessionMinutes" />
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="submit">Enregistrer</button>
+                  <span v-if="savedNotice" class="text-sm text-emerald-700">Sauvegardé.</span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOOLS -->
+        <section v-if="tab==='tools'" class="mt-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="card">
+              <h2 class="font-semibold">Sauvegarde / restauration</h2>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button class="btn btn-outline" type="button" @click="exportAll">Exporter toutes les données</button>
+                <label class="btn btn-outline cursor-pointer">
+                  Importer JSON
+                  <input class="hidden" type="file" accept="application/json" @change="importAll" />
+                </label>
+                <button class="btn btn-outline" type="button" @click="resetAll">Réinitialiser (seed)</button>
+              </div>
+              <p class="mt-2 text-xs text-slate-500">
+                Pratique pour déplacer les contenus entre navigateurs (limite: GitHub Pages / localStorage).
+              </p>
+              <div v-if="toolNotice" class="mt-3 text-sm text-emerald-700">{{ toolNotice }}</div>
+              <div v-if="toolError" class="mt-3 text-sm text-rose-700">{{ toolError }}</div>
+            </div>
+
+            <div class="card">
+              <h2 class="font-semibold">Journal d’activité (debug)</h2>
+              <div class="mt-3 grid gap-2">
+                <div v-if="activity.length===0" class="text-sm text-slate-500">Aucune activité.</div>
+                <div v-for="(a, idx) in activity.slice(0, 30)" :key="idx" class="rounded-xl border border-slate-200 p-3 text-sm">
+                  <div class="font-mono text-xs text-slate-500">{{ a.at }}</div>
+                  <div class="mt-1 font-semibold">{{ a.action }}</div>
+                  <div class="mt-1 text-slate-600">{{ a.detail }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./js/admin.js"></script>
+  </body>
+</html>
+
