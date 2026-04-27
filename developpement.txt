@@ -1,0 +1,124 @@
+17. Contraintes de développement et choix technologiques
+17.1 Contrainte principale du projet
+
+Il est important de noter que le projet sera hébergé sur GitHub Pages (version gratuite).
+
+Conséquences directes :
+❌ aucun backend serveur (Node.js, PHP, Laravel, etc.)
+❌ aucune base de données côté serveur
+❌ aucune configuration complexe d’hébergement
+✅ solution 100% statique obligatoire
+✅ déploiement simple via GitHub
+17.2 Objectif technique
+
+Le projet doit être :
+
+léger
+rapide
+facilement déployable
+maintenable sans compétence backend avancée
+compatible GitHub Pages
+17.3 Architecture recommandée
+
+Structure simple du projet :
+
+project/
+│
+├── index.html        (site client)
+├── admin.html        (interface admin)
+├── style.css         (design)
+├── app.js            (logique principale)
+└── data (optionnel via localStorage)
+17.4 Stack technologique recommandée
+Frontend principal
+HTML5
+CSS3
+JavaScript (Vanilla JS)
+Framework léger (sans build)
+Vue.js via CDN
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+Styling
+
+Option recommandée :
+
+Tailwind CSS via CDN
+<script src="https://cdn.tailwindcss.com"></script>
+
+ou CSS classique si minimalisme souhaité.
+
+17.5 Gestion des données (sans backend)
+Option 1 — Recommandée : localStorage
+
+Le système admin utilise le stockage local du navigateur.
+
+Fonctionnement :
+Admin crée / modifie / supprime des données
+Données stockées dans le navigateur
+localStorage.setItem("articles", JSON.stringify(articles));
+Avantages :
+aucune configuration
+fonctionne sur GitHub Pages
+rapide à développer
+simple à maintenir
+Limites :
+données liées au navigateur
+pas multi-utilisateur réel
+Option 2 — JSON statique (lecture seule)
+
+Fichier :
+
+data.json
+
+⚠️ Limitation :
+
+ne peut pas être modifié dynamiquement depuis le site sur GitHub Pages
+17.6 Fonctionnement du système
+Côté utilisateur (public)
+consultation des services
+lecture des réalisations
+lecture des articles
+formulaire de contact
+affichage dynamique via Vue.js
+Côté admin
+
+Interface dédiée :
+
+ajout articles
+modification articles
+suppression articles
+gestion témoignages
+gestion réalisations
+sauvegarde locale (localStorage)
+17.7 Déploiement
+Plateforme cible :
+
+GitHub Pages
+
+Étapes :
+push du projet sur GitHub
+activation GitHub Pages
+sélection branch main
+site en ligne
+17.8 Conclusion technique
+
+Ce projet est volontairement conçu comme :
+
+une application web statique moderne
+sans backend
+sans base de données serveur
+avec une logique légère côté client
+Stack finale recommandée :
+HTML5
+CSS3 / Tailwind CSS (CDN)
+JavaScript Vanilla
+Vue.js (CDN)
+localStorage (gestion données)
+GitHub Pages (hébergement)
+17.9 Résumé global des choix techniques
+
+✔ Simple à développer
+✔ Zéro backend
+✔ Déploiement gratuit
+✔ Interface admin légère
+✔ Compatible mobile
+✔ Maintenance facile

@@ -1,0 +1,257 @@
+CAHIER DES CHARGES — MINI PLATEFORME VITRINE
+1. Présentation du projet
+Nom du projet
+
+Mini plateforme vitrine / portfolio professionnel
+
+Client
+
+Staff Technique Madagascar
+
+Activité
+
+Entreprise de finition et décoration de bâtiment.
+
+Objectif principal
+
+Créer une plateforme web permettant de :
+
+présenter l’entreprise ;
+présenter les services ;
+afficher les réalisations ;
+générer des demandes de devis ;
+administrer facilement tout le contenu via une interface sécurisée.
+2. Objectifs du projet
+Objectifs business
+améliorer la visibilité en ligne ;
+générer des prospects ;
+renforcer la crédibilité ;
+centraliser la communication.
+Objectifs techniques
+site rapide et responsive ;
+interface administrateur complète ;
+gestion dynamique du contenu ;
+sécurité des données.
+3. Public cible
+particuliers (maisons, rénovation) ;
+entreprises (bureaux, commerces, hôtels) ;
+promoteurs immobiliers.
+4. Architecture du site
+4.1 Site public
+Accueil
+présentation entreprise ;
+slogan ;
+CTA ;
+aperçu services ;
+réalisations ;
+statistiques.
+Notre histoire
+évolution entreprise (depuis 2020 fictif) ;
+valeurs ;
+vision.
+Services
+plafond ;
+murs / cloisons ;
+peinture ;
+sol ;
+électricité ;
+mobilier.
+Réalisations
+galerie images ;
+avant / après ;
+catégories.
+FAQ
+questions fréquentes.
+Contact
+téléphone ;
+WhatsApp ;
+email ;
+formulaire.
+4.2 Espace administration (IMPORTANT)
+Objectif
+
+Permettre au propriétaire de gérer totalement le site sans développeur.
+
+5. Système d’authentification admin
+5.1 Connexion sécurisée
+page login admin ;
+email + mot de passe ;
+protection contre brute force ;
+session sécurisée ;
+déconnexion automatique.
+5.2 Gestion des rôles (optionnel évolutif)
+Admin principal ;
+Agent (lecture / modification limitée).
+6. Dashboard administrateur
+
+Interface centrale avec statistiques :
+
+nombre de visites ;
+demandes de devis ;
+projets publiés ;
+messages reçus.
+7. Modules CRUD (gestion complète)
+7.1 Gestion des services (CRUD)
+créer service ;
+modifier service ;
+supprimer service ;
+afficher service.
+
+Champs :
+
+titre ;
+description ;
+image ;
+catégorie.
+7.2 Gestion des réalisations (CRUD)
+ajout projets ;
+édition ;
+suppression ;
+classement par catégorie.
+
+Champs :
+
+images ;
+description ;
+type de travaux ;
+localisation.
+7.3 Gestion des articles / blog (CRUD)
+créer article ;
+modifier article ;
+supprimer article ;
+publication.
+
+Champs :
+
+titre ;
+contenu ;
+image ;
+date ;
+auteur.
+7.4 Gestion des témoignages clients (CRUD)
+ajouter avis ;
+modifier ;
+supprimer ;
+validation admin.
+7.5 Gestion des demandes de devis
+liste des demandes ;
+statut (nouveau / en cours / terminé) ;
+réponse admin ;
+export possible.
+7.6 Gestion des pages statiques
+à propos ;
+FAQ ;
+contact ;
+zones d’intervention.
+7.7 Gestion des partenaires
+ajout logo ;
+modification ;
+suppression.
+8. Fonctionnalités avancées admin
+Upload médias
+images ;
+vidéos ;
+compression automatique.
+Éditeur de contenu
+texte riche (type WYSIWYG).
+Notifications
+nouvelles demandes devis ;
+nouveaux messages.
+Sécurité
+hash mot de passe ;
+protection routes admin ;
+logs activité.
+9. Fonctionnalités côté public
+site responsive ;
+SEO optimisé ;
+CTA visibles ;
+chargement rapide ;
+formulaire contact.
+10. Design
+
+Style :
+
+moderne ;
+professionnel ;
+chantier / architecture.
+
+Couleurs :
+
+bleu ;
+blanc ;
+orange accent.
+11. CTA (Call To Action)
+
+Boutons globaux :
+
+Demander un devis
+Appeler maintenant
+WhatsApp direct
+Voir nos réalisations
+Prendre rendez-vous
+12. SEO
+
+Optimisation pour :
+
+finition bâtiment Madagascar ;
+plafond placo Madagascar ;
+décoration intérieure ;
+entreprise bâtiment Madagascar.
+13. Sécurité
+authentification admin ;
+protection API ;
+validation formulaires ;
+anti-spam contact ;
+limitation accès admin.
+14. Performance
+images optimisées ;
+lazy loading ;
+cache ;
+responsive mobile-first.
+15. Livrables
+site web complet ;
+back-office admin ;
+base de données ;
+documentation technique.
+16. Évolutions futures
+système devis automatique ;
+chat en ligne ;
+multi-langue (FR / MG) ;
+paiement en ligne ;
+espace client.
+INFORMATIONS À FOURNIR PAR LE CLIENT
+Identité
+logo officiel ;
+nom final ;
+slogan final.
+Entreprise
+histoire réelle ;
+année exacte ;
+équipe réelle.
+Services
+liste officielle ;
+prix réels ;
+descriptions validées.
+Médias
+photos projets ;
+vidéos chantier.
+Contact
+téléphone officiel ;
+WhatsApp ;
+email.
+Juridique
+certificats ISO ;
+documents entreprise.
+Réseaux sociaux
+pages officielles.
+Réalisations
+projets réels uniquement.
+Conclusion
+
+Ce cahier de charges inclut maintenant :
+
+site vitrine complet ;
+marketing ;
+SEO ;
+gestion admin complète (CRUD + auth + dashboard) ;
+évolutivité professionnelle.
