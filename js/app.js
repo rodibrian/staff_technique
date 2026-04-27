@@ -34,6 +34,7 @@ const app = Vue.createApp({
       services: getJson(keys.services, []),
       projects: getJson(keys.projects, []),
       articles: getJson(keys.articles, []).filter((a) => a?.published !== false),
+      testimonials: getJson(keys.testimonials, []).filter((t) => t?.approved),
       faqs: getJson(`${keys.pages}:faq`, []),
       partners: getJson(keys.partners, []),
 

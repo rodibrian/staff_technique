@@ -177,6 +177,7 @@ const defaultTestimonials = [
     name: "Client Démo 1",
     company: "Résidentiel",
     rating: 5,
+    photo: "",
     message:
       "Travail propre et équipe organisée. Délais respectés. (Avis fictif pour démonstration)",
     approved: true,
@@ -187,6 +188,7 @@ const defaultTestimonials = [
     name: "Client Démo 2",
     company: "Entreprise",
     rating: 4,
+    photo: "",
     message:
       "Bonne communication et finitions soignées. (Avis fictif pour démonstration)",
     approved: true,

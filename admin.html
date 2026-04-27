@@ -361,6 +361,20 @@
                   <label class="label">Message</label>
                   <textarea class="input min-h-28" v-model.trim="testimonialForm.message" required></textarea>
                 </div>
+                <div class="grid gap-1">
+                  <label class="label">Photo (optionnel)</label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <input
+                      class="input"
+                      v-model.trim="testimonialForm.photo"
+                      placeholder="./assets/images/user.svg"
+                    />
+                    <input type="file" accept="image/*" @change="onPickImage($event, 'testimonial')" />
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    Si vide: une icône utilisateur sera affichée sur le site.
+                  </p>
+                </div>
                 <label class="flex items-center gap-2 text-sm">
                   <input type="checkbox" v-model="testimonialForm.approved" />
                   Approuvé (visible public)

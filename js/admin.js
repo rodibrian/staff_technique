@@ -166,7 +166,7 @@ Vue.createApp({
       projectForm: { id: "", title: "", description: "", images: [], category: "", type: "", location: "" },
       projectImagesCsv: "",
       articleForm: { id: "", title: "", content: "", image: "./assets/images/hero.svg", date: "", author: "", published: true },
-      testimonialForm: { id: "", name: "", company: "", rating: 5, message: "", approved: true },
+      testimonialForm: { id: "", name: "", company: "", rating: 5, message: "", photo: "", approved: true },
       faqForm: { id: "", q: "", a: "" },
       partnerForm: { id: "", name: "", logo: "./assets/images/logo.svg" },
     };
@@ -293,6 +293,7 @@ Vue.createApp({
           if (target === "service") this.serviceForm.image = url;
           if (target === "article") this.articleForm.image = url;
           if (target === "partner") this.partnerForm.logo = url;
+          if (target === "testimonial") this.testimonialForm.photo = url;
 
           // Télécharge le fichier pour que l'utilisateur puisse le déposer dans:
           // assets/images/<module>/...
@@ -433,7 +434,7 @@ Vue.createApp({
 
     // ---- TESTIMONIALS CRUD ----
     resetTestimonialForm() {
-      this.testimonialForm = { id: "", name: "", company: "", rating: 5, message: "", approved: true };
+      this.testimonialForm = { id: "", name: "", company: "", rating: 5, message: "", photo: "", approved: true };
     },
     editTestimonial(t) {
       this.testimonialForm = { ...t };
