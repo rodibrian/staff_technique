@@ -10,6 +10,7 @@
 import { ensureSeed } from "./lib/seed.js";
 import { keys, getJson, setJson, remove, pushLog } from "./lib/storage.js";
 import { uid, nowIso, formatDateFr, excerptText, clamp, isNonEmptyString } from "./lib/utils.js";
+import { uploadImageUnsigned } from "./lib/cloudinary.js";
 
 ensureSeed();
 syncJsonMirror();
@@ -200,6 +201,10 @@ Vue.createApp({
       toolNotice: "",
       toolError: "",
 
+      cloudinaryForm: getJson(keys.cloudinary, { enabled: false, cloudName: "", uploadPreset: "", folder: "dolice" }),
+      uploadNotice: "",
+      uploadError: "",
+
       serviceForm: { id: "", title: "", description: "", image: "./assets/images/hero.svg", category: "" },
       projectForm: { id: "", title: "", description: "", images: [], category: "", type: "", location: "" },
       projectImagesCsv: "",
@@ -306,6 +311,29 @@ Vue.createApp({
       return true;
     },
 
+    saveCloudinaryConfig() {
+      if (!this.guard()) return;
+      setJson(keys.cloudinary, this.cloudinaryForm);
+      pushLog({ at: nowIso(), action: "CLOUDINARY_SAVE", detail: "config" });
+      syncJsonMirror();
+      this.notifySaved();
+    },
+
+    async uploadToCloudinaryIfEnabled(file, kind) {
+      const cfg = getJson(keys.cloudinary, null);
+      const enabled = Boolean(cfg?.enabled && cfg?.cloudName && cfg?.uploadPreset);
+      if (!enabled) return null;
+
+      const folder = cfg.folder ? `${cfg.folder}/${kind}` : kind;
+      const r = await uploadImageUnsigned({
+        file,
+        cloudName: cfg.cloudName,
+        uploadPreset: cfg.uploadPreset,
+        folder,
+      });
+      return r?.url || null;
+    },
+
     // ---- Upload image (base64) ----
     async onPickImage(evt, target) {
       if (!this.guard()) return;
@@ -316,18 +344,30 @@ Vue.createApp({
         if (target === "project") {
           const urls = [];
           for (const f of files.slice(0, 4)) {
-            const url = await fileToDataUrl(f);
+            const cloudUrl = await this.uploadToCloudinaryIfEnabled(f, "realisations");
+            const url = cloudUrl || (await fileToDataUrl(f));
             urls.push(url);
-            // Le navigateur ne peut pas écrire dans le repo: on télécharge le fichier
-            // et on suggère le chemin cible dans l'arborescence du projet.
-            downloadFileFromDataUrl(url, f.name);
+            // Si Cloudinary est actif, pas besoin de télécharger le fichier (URL stockée).
+            if (!cloudUrl) downloadFileFromDataUrl(url, f.name);
           }
           const merged = [...asArrayCsv(this.projectImagesCsv), ...urls].slice(0, 6);
           this.projectImagesCsv = merged.join(", ");
           this.projectForm.images = merged;
         } else {
           const f = files[0];
-          const url = await fileToDataUrl(f);
+          const kindMap = {
+            service: "services",
+            article: "blog",
+            partner: "partenariats",
+            testimonial: "temoignages",
+            principalLogo: "principal",
+            principalCover: "principal",
+            principalCoverProject: "principal",
+          };
+          const kind = kindMap[target] || "images";
+
+          const cloudUrl = await this.uploadToCloudinaryIfEnabled(f, kind);
+          const url = cloudUrl || (await fileToDataUrl(f));
           if (target === "service") this.serviceForm.image = url;
           if (target === "article") this.articleForm.image = url;
           if (target === "partner") this.partnerForm.logo = url;
@@ -338,10 +378,10 @@ Vue.createApp({
 
           // Télécharge le fichier pour que l'utilisateur puisse le déposer dans:
           // assets/images/<module>/...
-          downloadFileFromDataUrl(url, f.name);
+          if (!cloudUrl) downloadFileFromDataUrl(url, f.name);
         }
-      } catch {
-        // Silencieux: pas bloquant.
+      } catch (e) {
+        this.uploadError = e?.message || "Upload impossible";
       } finally {
         evt.target.value = "";
       }

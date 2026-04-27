@@ -30,6 +30,9 @@ export const keys = {
 
   // Miroir JSON des données (synchronisé après chaque mise à jour admin).
   jsonMirror: `${PREFIX}jsonMirror`,
+
+  // Cloudinary config (unsigned upload) - stocké en local pour l'admin.
+  cloudinary: `${PREFIX}cloudinary`,
 };
 
 export function getJson(key, fallback) {
