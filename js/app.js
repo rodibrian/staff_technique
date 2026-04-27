@@ -11,6 +11,42 @@ import { excerptText, formatDateFr, toTelHref, toWhatsAppHref, uid, nowIso } fro
 
 ensureSeed();
 
+async function fetchJsonWithTimeout(url, timeoutMs = 3500) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function applyCentralContent(bagData) {
+  // Centralise uniquement le contenu public (pas de sécurité/admin).
+  if (!bagData || typeof bagData !== "object") return;
+  if (bagData.pages) setJson(keys.pages, bagData.pages);
+  if (bagData.faqs) setJson(`${keys.pages}:faq`, bagData.faqs);
+  if (bagData.stats) setJson(keys.stats, bagData.stats);
+  if (bagData.services) setJson(keys.services, bagData.services);
+  if (bagData.projects) setJson(keys.projects, bagData.projects);
+  if (bagData.articles) setJson(keys.articles, bagData.articles);
+  if (bagData.testimonials) setJson(keys.testimonials, bagData.testimonials);
+  if (bagData.partners) setJson(keys.partners, bagData.partners);
+}
+
+// Centralisation (Netlify): si `data/site-config.json` contient une URL Cloudinary (raw json),
+// tous les visiteurs chargent la même version du contenu.
+const siteCfg = await fetchJsonWithTimeout("./data/site-config.json", 2000);
+if (siteCfg?.contentUrl) {
+  const payload = await fetchJsonWithTimeout(siteCfg.contentUrl, 4000);
+  const bagData = payload?.data || payload;
+  applyCentralContent(bagData);
+}
+
 // Stat de visite (démonstration). Utile aussi pour le dashboard admin.
 incCounter(keys.visits, 1);
 
