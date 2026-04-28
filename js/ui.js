@@ -82,7 +82,7 @@ function initProjectsCarousel() {
 
   try {
     // eslint-disable-next-line no-new
-    new window.Swiper(container, {
+    const swiper = new window.Swiper(container, {
       slidesPerView: 1.08,
       spaceBetween: 14,
       speed: 450,
@@ -102,6 +102,38 @@ function initProjectsCarousel() {
         1024: { slidesPerView: 3, spaceBetween: 18 },
       },
     });
+
+    // Vue met à jour la liste (filtre catégories) après init.
+    // Sans update(), Swiper peut garder un état incohérent (pagination/largeur/slides).
+    const wrapper = container.querySelector(".swiper-wrapper");
+    if (wrapper && window.MutationObserver) {
+      const scheduleUpdate = () => {
+        try {
+          swiper.update();
+          swiper.slideTo(0, 0);
+        } catch {
+          // ignore
+        }
+      };
+
+      const mo = new MutationObserver(() => {
+        // micro-délai: laisse Vue appliquer le DOM final
+        setTimeout(scheduleUpdate, 0);
+      });
+      mo.observe(wrapper, { childList: true, subtree: true });
+
+      // Bonus: si l’utilisateur clique sur un chip, on force l’update.
+      const chips = document.querySelector("#realisations");
+      if (chips) {
+        chips.addEventListener(
+          "click",
+          (e) => {
+            if (e?.target && e.target.closest && e.target.closest(".chip")) setTimeout(scheduleUpdate, 0);
+          },
+          { passive: true }
+        );
+      }
+    }
   } catch {
     // ignore
   }

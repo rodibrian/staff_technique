@@ -18,6 +18,22 @@ syncJsonMirror();
 const SESSION_KEY = `${keys.security}:session`;
 const LOCK_KEY = `${keys.security}:lock`;
 
+async function fetchJsonSafe(url, timeoutMs = 2000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+    if (!res.ok) return null;
+    const ct = String(res.headers?.get?.("content-type") || "").toLowerCase();
+    if (ct && !ct.includes("application/json") && !ct.includes("+json")) return null;
+    return await res.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 const DEFAULT_PAGES = {
   identity: {
     companyName: "Staff Technique Madagascar",
@@ -214,6 +230,9 @@ Vue.createApp({
       uploadNotice: "",
       uploadError: "",
 
+      autoPushTimer: 0,
+      autoPushInFlight: false,
+
       serviceForm: { id: "", title: "", description: "", image: "./assets/images/hero.svg", category: "" },
       projectForm: { id: "", title: "", description: "", images: [], category: "", type: "", location: "" },
       projectImagesCsv: "",
@@ -262,6 +281,41 @@ Vue.createApp({
     } catch {
       // ignore
     }
+
+    // Charge une config publique centralisée (runtime-config.json) si disponible.
+    // Objectif: même config Cloudinary + même contentPublicId sur tous les appareils.
+    (async () => {
+      const rcfg = await fetchJsonSafe("./data/runtime-config.json", 2000);
+      if (!rcfg || typeof rcfg !== "object") return;
+      const c = rcfg.cloudinary && typeof rcfg.cloudinary === "object" ? rcfg.cloudinary : {};
+
+      // On ne remplace pas une config déjà saisie en local (sauf champs vides).
+      const current = getJson(keys.cloudinary, this.cloudinaryForm);
+      const next = { ...current };
+
+      if (typeof c.enabled === "boolean") next.enabled = c.enabled;
+      if (!next.cloudName && c.cloudName) next.cloudName = c.cloudName;
+      if (!next.uploadPreset && c.uploadPreset) next.uploadPreset = c.uploadPreset;
+      if (!next.folder && c.folder) next.folder = c.folder;
+      if (!next.contentPublicId && c.contentPublicId) next.contentPublicId = c.contentPublicId;
+
+      if (typeof rcfg.features?.contentSyncEnabled === "boolean") next.contentSyncEnabled = rcfg.features.contentSyncEnabled;
+      if (rcfg.contentUrl && !next.contentUrl) next.contentUrl = rcfg.contentUrl;
+
+      // Déduit une URL de lecture stable si possible
+      if (next.cloudName && next.contentPublicId) {
+        next.contentUrl =
+          next.contentUrl ||
+          cloudinaryRawUrl({
+            cloudName: next.cloudName,
+            publicId: next.contentPublicId,
+            format: "json",
+          });
+      }
+
+      this.cloudinaryForm = next;
+      setJson(keys.cloudinary, next);
+    })();
 
     // Si session invalide -> rester sur login
     if (!this.session.isAuthed) this.tab = "services";
@@ -374,6 +428,30 @@ Vue.createApp({
       this.notifySaved();
     },
 
+    scheduleAutoPush() {
+      // Si activé, on pousse automatiquement le JSON miroir sur Cloudinary.
+      // Debounce: évite un upload par clic lors d'une série de modifications.
+      try {
+        const cfg = getJson(keys.cloudinary, null);
+        const enabled = Boolean(cfg?.enabled && cfg?.cloudName && cfg?.uploadPreset);
+        const syncOn = Boolean(cfg?.contentSyncEnabled);
+        if (!enabled || !syncOn) return;
+      } catch {
+        return;
+      }
+
+      if (this.autoPushTimer) clearTimeout(this.autoPushTimer);
+      this.autoPushTimer = setTimeout(async () => {
+        if (this.autoPushInFlight) return;
+        this.autoPushInFlight = true;
+        try {
+          await this.pushContentToCloudinary();
+        } finally {
+          this.autoPushInFlight = false;
+        }
+      }, 600);
+    },
+
     async pushContentToCloudinary() {
       if (!this.guard()) return;
       this.uploadError = "";
@@ -397,15 +475,14 @@ Vue.createApp({
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const file = new File([blob], "content.json", { type: "application/json" });
 
-        // Plus robuste: évite les "/" dans public_id, on range via folder.
-        const publicId = String(cfg.contentPublicId).replace(/[\/\\]+/g, "_");
-        const folder = cfg.folder ? `${cfg.folder}/content` : "content";
+        // IMPORTANT: on respecte `contentPublicId` tel quel (peut contenir des "/").
+        // Exemple: "dolice/content" => URL stable: .../raw/upload/dolice/content.json
+        const publicId = String(cfg.contentPublicId).replace(/^\/+/, "");
 
         const r = await uploadRawUnsigned({
           file,
           cloudName: cfg.cloudName,
           uploadPreset: cfg.uploadPreset,
-          folder,
           publicId,
           overwrite: true,
         });
@@ -413,7 +490,7 @@ Vue.createApp({
         // URL versionnée fiable + URL stable calculée.
         const stableUrl = cloudinaryRawUrl({
           cloudName: cfg.cloudName,
-          publicId: `${folder}/${publicId}`,
+          publicId,
           format: "json",
         });
         const url = r?.url || stableUrl;
@@ -436,10 +513,8 @@ Vue.createApp({
       try {
         const cfg = getJson(keys.cloudinary, null);
 
-        const folder = cfg?.folder ? `${cfg.folder}/content` : "content";
-        const pid = cfg?.contentPublicId ? String(cfg.contentPublicId).replace(/[\/\\]+/g, "_") : "";
-        const derivedUrl =
-          cfg?.cloudName && pid ? cloudinaryRawUrl({ cloudName: cfg.cloudName, publicId: `${folder}/${pid}`, format: "json" }) : "";
+        const pid = cfg?.contentPublicId ? String(cfg.contentPublicId).replace(/^\/+/, "") : "";
+        const derivedUrl = cfg?.cloudName && pid ? cloudinaryRawUrl({ cloudName: cfg.cloudName, publicId: pid, format: "json" }) : "";
 
         const url = cfg?.contentUrl || derivedUrl;
         if (!url) {
@@ -574,6 +649,7 @@ Vue.createApp({
       this.services = list;
       setJson(keys.services, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetServiceForm();
       this.notifySaved();
     },
@@ -584,6 +660,7 @@ Vue.createApp({
       setJson(keys.services, next);
       pushLog({ at: nowIso(), action: "SERVICE_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
 
@@ -616,6 +693,7 @@ Vue.createApp({
       this.projects = list;
       setJson(keys.projects, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetProjectForm();
       this.notifySaved();
       this.refreshMetrics();
@@ -627,6 +705,7 @@ Vue.createApp({
       setJson(keys.projects, next);
       pushLog({ at: nowIso(), action: "PROJECT_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
 
@@ -663,6 +742,7 @@ Vue.createApp({
       this.articles = list;
       setJson(keys.articles, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetArticleForm();
       this.notifySaved();
     },
@@ -673,6 +753,7 @@ Vue.createApp({
       setJson(keys.articles, next);
       pushLog({ at: nowIso(), action: "ARTICLE_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
     },
 
     // ---- TESTIMONIALS CRUD ----
@@ -702,6 +783,7 @@ Vue.createApp({
       this.testimonials = list;
       setJson(keys.testimonials, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetTestimonialForm();
       this.notifySaved();
     },
@@ -712,6 +794,7 @@ Vue.createApp({
       setJson(keys.testimonials, next);
       pushLog({ at: nowIso(), action: "TESTIMONIAL_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
     },
 
     // ---- QUOTES ----
@@ -720,6 +803,7 @@ Vue.createApp({
       setJson(keys.quotes, this.quotes);
       pushLog({ at: nowIso(), action: "QUOTE_STATUS", detail: `${q.id} -> ${q.status}` });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
     saveQuoteReply(q) {
@@ -727,6 +811,7 @@ Vue.createApp({
       setJson(keys.quotes, this.quotes);
       pushLog({ at: nowIso(), action: "QUOTE_REPLY", detail: `${q.id}` });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.notifySaved();
     },
     deleteQuote(id) {
@@ -735,6 +820,7 @@ Vue.createApp({
       setJson(keys.quotes, this.quotes);
       pushLog({ at: nowIso(), action: "QUOTE_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
     clearQuotes() {
@@ -743,6 +829,7 @@ Vue.createApp({
       this.quotes = [];
       pushLog({ at: nowIso(), action: "QUOTE_CLEAR", detail: "toutes" });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
     exportQuotes() {
@@ -763,6 +850,7 @@ Vue.createApp({
       setJson(keys.messages, this.messages);
       pushLog({ at: nowIso(), action: "MESSAGE_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
     clearMessages() {
@@ -771,6 +859,7 @@ Vue.createApp({
       this.messages = [];
       pushLog({ at: nowIso(), action: "MESSAGE_CLEAR", detail: "tous" });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.refreshMetrics();
     },
     exportMessages() {
@@ -790,6 +879,7 @@ Vue.createApp({
       setJson(keys.pages, this.pagesForm);
       pushLog({ at: nowIso(), action: "PAGES_SAVE", detail: "pages statiques" });
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.notifySaved();
     },
 
@@ -816,6 +906,7 @@ Vue.createApp({
       this.faqs = list;
       setJson(`${keys.pages}:faq`, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetFaqForm();
       this.notifySaved();
     },
@@ -826,6 +917,7 @@ Vue.createApp({
       setJson(`${keys.pages}:faq`, next);
       pushLog({ at: nowIso(), action: "FAQ_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
     },
 
     // ---- PARTNERS CRUD ----
@@ -853,6 +945,7 @@ Vue.createApp({
       this.partners = list;
       setJson(keys.partners, list);
       syncJsonMirror();
+      this.scheduleAutoPush();
       this.resetPartnerForm();
       this.notifySaved();
     },
@@ -863,6 +956,7 @@ Vue.createApp({
       setJson(keys.partners, next);
       pushLog({ at: nowIso(), action: "PARTNER_DELETE", detail: id });
       syncJsonMirror();
+      this.scheduleAutoPush();
     },
 
     // ---- SECURITY ----

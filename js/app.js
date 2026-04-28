@@ -17,6 +17,9 @@ async function fetchJsonWithTimeout(url, timeoutMs = 3500) {
   try {
     const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
     if (!res.ok) return null;
+    const ct = String(res.headers?.get?.("content-type") || "").toLowerCase();
+    // Si Cloudinary (ou autre) renvoie une page HTML d'erreur, on n'essaie pas de parser en JSON.
+    if (ct && !ct.includes("application/json") && !ct.includes("+json")) return null;
     return await res.json();
   } catch {
     return null;
@@ -38,19 +41,40 @@ function applyCentralContent(bagData) {
   if (bagData.partners) setJson(keys.partners, bagData.partners);
 }
 
-// Centralisation (Netlify): si `data/site-config.json` contient une URL Cloudinary (raw json),
-// tous les visiteurs chargent la même version du contenu.
-const siteCfg = await fetchJsonWithTimeout("./data/site-config.json", 2000);
-if (siteCfg?.contentUrl) {
-  const payload = await fetchJsonWithTimeout(siteCfg.contentUrl, 4000);
-  const bagData = payload?.data || payload;
-  applyCentralContent(bagData);
+// Centralisation: tous les visiteurs chargent la même version du contenu (Cloudinary raw).
+// Priorité: runtime-config.json (nouveau) puis site-config.json (compat).
+try {
+  const runtimeCfg = await fetchJsonWithTimeout("./data/runtime-config.json", 2000);
+  const legacyCfg = runtimeCfg ? null : await fetchJsonWithTimeout("./data/site-config.json", 2000);
+  const contentUrl = runtimeCfg?.contentUrl || legacyCfg?.contentUrl;
+  const enabled = runtimeCfg?.features?.contentSyncEnabled !== false;
+
+  if (enabled && contentUrl) {
+    const payload = await fetchJsonWithTimeout(contentUrl, 4000);
+    const bagData = payload?.data || payload;
+    applyCentralContent(bagData);
+  }
+} catch {
+  // Ne bloque jamais le rendu du site si la centralisation échoue.
 }
 
 // Stat de visite (démonstration). Utile aussi pour le dashboard admin.
 incCounter(keys.visits, 1);
 
 const placeholderImage = "./assets/images/hero.svg";
+
+function normalizeImageUrl(url) {
+  const s = String(url || "").trim();
+  if (!s) return "";
+  // Évite les URLs data: incomplètes (ex: "data:image/jpeg;base64" sans payload)
+  if (s.startsWith("data:image") && !s.includes(",")) return "";
+  // Évite les payloads base64 "nus" (ex: "/9j/..." ou "9j/..." => le navigateur fait un GET /9j/...).
+  // Symptôme: net::ERR_CONNECTION_RESET 431 (Request Header Fields Too Large)
+  if (s.startsWith("/9j/") || s.startsWith("9j/")) return "";
+  // Quelques signatures base64 courantes (PNG/JPEG) sans préfixe data:
+  if (s.startsWith("iVBOR") || s.startsWith("/iVBOR")) return "";
+  return s;
+}
 
 const app = Vue.createApp({
   data() {
@@ -60,16 +84,36 @@ const app = Vue.createApp({
       placeholderImage,
 
       stats: getJson(keys.stats, { projects: 0, years: 0, clients: 0, response: "-" }),
-      pages,
+      pages: {
+        ...pages,
+        identity: pages?.identity
+          ? {
+              ...pages.identity,
+              logo: normalizeImageUrl(pages.identity.logo) || pages.identity.logo,
+              coverImage: normalizeImageUrl(pages.identity.coverImage) || pages.identity.coverImage,
+              coverProject: pages.identity?.coverProject
+                ? {
+                    ...pages.identity.coverProject,
+                    image: normalizeImageUrl(pages.identity.coverProject.image) || pages.identity.coverProject.image,
+                  }
+                : pages.identity?.coverProject,
+            }
+          : pages?.identity,
+      },
       contact: {
         phone: contact.phone || "+261 00 000 00",
         whatsapp: contact.whatsapp || "+261 00 000 00",
         email: contact.email || "contact@example.com",
       },
 
-      services: getJson(keys.services, []),
-      projects: getJson(keys.projects, []),
-      articles: getJson(keys.articles, []).filter((a) => a?.published !== false),
+      services: getJson(keys.services, []).map((s) => ({ ...s, image: normalizeImageUrl(s?.image) || placeholderImage })),
+      projects: getJson(keys.projects, []).map((p) => ({
+        ...p,
+        images: Array.isArray(p?.images) ? p.images.map((u) => normalizeImageUrl(u)).filter(Boolean) : [],
+      })),
+      articles: getJson(keys.articles, [])
+        .filter((a) => a?.published !== false)
+        .map((a) => ({ ...a, image: normalizeImageUrl(a?.image) || placeholderImage })),
       testimonials: getJson(keys.testimonials, []).filter((t) => t?.approved),
       faqs: getJson(`${keys.pages}:faq`, []),
       partners: getJson(keys.partners, []),
@@ -156,5 +200,5 @@ const app = Vue.createApp({
   },
 });
 
-app.mount("body");
+app.mount("#app");
 

@@ -1,0 +1,17 @@
+{
+  "version": "dolice_runtime_v1",
+  "features": {
+    "contentSyncEnabled": true
+  },
+  "cloudinary": {
+    "enabled": true,
+    "cloudName": "den26yr8o",
+    "uploadPreset": "dolice_unsigned",
+    "folder": "dolice",
+    "contentPublicId": "dolice/content"
+  },
+  "contentUrl": "https://res.cloudinary.com/den26yr8o/raw/upload/dolice/content.json",
+  "netlify": {
+    "cacheBust": false
+  }
+}

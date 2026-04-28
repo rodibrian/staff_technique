@@ -7,7 +7,7 @@
       name="description"
       content="Staff Technique Madagascar — entreprise de finition et décoration de bâtiment. Services, réalisations, blog, contact et demande de devis."
     />
-    <title>Staff Technique Madagascar — Finition & Décoration v1.0.1</title>
+    <title>Staff Technique Madagascar — Finition & Décoration v1.1</title>
 
     <!--
       GitHub Pages (gratuit) => site 100% statique.
@@ -32,7 +32,8 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
 
-  <body class="bg-slate-50 text-slate-900">
+  <body class="bg-slate-50 text-slate-900" data-page="home">
+    <div id="app">
     <a
       href="#contenu"
       class="sr-only focus:not-sr-only focus:fixed focus:z-50 focus:m-3 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow"
@@ -57,14 +58,12 @@
         </div>
 
         <nav class="hidden items-center gap-5 text-sm md:flex">
-          <a class="navlink" href="#accueil">Accueil</a>
-          <a class="navlink" href="#histoire">Notre histoire</a>
-          <a class="navlink" href="#services">Services</a>
-          <a class="navlink" href="#realisations">Réalisations</a>
-          <a class="navlink" href="#blog">Blog</a>
-          <a class="navlink" href="#temoignages">Témoignages</a>
-          <a class="navlink" href="#faq">FAQ</a>
-          <a class="navlink" href="#contact">Contact</a>
+          <a class="navlink navlink--active" href="./index.html">Accueil</a>
+          <a class="navlink" href="./pages/services.html">Services</a>
+          <a class="navlink" href="./pages/realisations.html">Réalisations</a>
+          <a class="navlink" href="./pages/blog.html">Blog</a>
+          <a class="navlink" href="./pages/faq.html">FAQ</a>
+          <a class="navlink" href="./pages/contact.html">Contact</a>
         </nav>
 
         <div class="flex items-center gap-2">
@@ -96,9 +95,9 @@
           </div>
 
             <div class="mt-6 flex flex-wrap gap-3">
-              <a class="btn btn-primary" href="#devis">Demander un devis</a>
+              <a class="btn btn-primary" href="./pages/devis.html">Demander un devis</a>
               <a class="btn btn-outline" :href="telLink">Appeler maintenant</a>
-              <a class="btn btn-outline" href="#realisations">Voir nos réalisations</a>
+              <a class="btn btn-outline" href="./pages/realisations.html">Voir nos réalisations</a>
             </div>
 
             <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -184,7 +183,7 @@
               <div class="text-sm font-semibold">Besoin d’un devis rapide ?</div>
               <div class="mt-1 text-sm text-slate-600">Décrivez votre chantier, réponse sous 24h (démo).</div>
               <div class="mt-3 flex flex-wrap gap-2">
-                <a class="btn btn-primary btn-sm" href="#devis">Demander un devis</a>
+                <a class="btn btn-primary btn-sm" href="./pages/devis.html">Demander un devis</a>
                 <a class="btn btn-outline btn-sm" :href="waLink">WhatsApp</a>
               </div>
             </div>
@@ -247,7 +246,7 @@
                   <h3 class="text-base font-semibold">{{ s.title }}</h3>
                   <p class="mt-1 text-xs text-slate-500">{{ s.category }}</p>
                 </div>
-                <a class="btn btn-xs btn-outline" href="#devis">Devis</a>
+                <a class="btn btn-xs btn-outline" href="./pages/devis.html">Devis</a>
               </div>
               <p class="mt-3 text-sm text-slate-600 line-clamp-3">{{ s.description }}</p>
             </div>
@@ -710,5 +709,6 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module" src="./js/app.js"></script>
     <script type="module" src="./js/ui.js"></script>
+    </div>
   </body>
 </html>

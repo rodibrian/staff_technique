@@ -25,3 +25,9 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
+# Ne pas cacher les configs/JSON de contenu (sinon les appareils ne récupèrent pas les dernières données).
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "no-store"
+

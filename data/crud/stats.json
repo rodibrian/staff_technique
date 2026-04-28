@@ -1,0 +1,6 @@
+{
+  "version": "dolice_crud_v1",
+  "resource": "stats",
+  "updatedAt": null,
+  "value": { "projects": 0, "years": 0, "clients": 0, "response": "-" }
+}
